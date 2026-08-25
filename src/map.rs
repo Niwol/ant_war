@@ -82,7 +82,11 @@ impl Map {
         self.map_name.clone()
     }
 
-    pub fn building_infos(&self) -> Vec<BuildingInfo> {
+    pub fn building_infos(&self) -> HashMap<BuildingId, BuildingInfo> {
+        self.building_infos.clone()
+    }
+
+    pub fn building_infos_as_vec(&self) -> Vec<BuildingInfo> {
         self.building_infos.values().copied().collect::<Vec<_>>()
     }
 
@@ -114,6 +118,32 @@ impl Map {
         }
 
         id
+    }
+
+    pub fn next_main_building_index(&self) -> usize {
+        let mut index_to_assigne = 1;
+
+        while self
+            .building_infos_as_vec()
+            .iter()
+            .find(|building_info| {
+                match building_info.building_type {
+                    BuildingType::House => (),
+                    BuildingType::MainBuilding { index } => {
+                        if index == index_to_assigne {
+                            return true;
+                        }
+                    }
+                }
+
+                false
+            })
+            .is_some()
+        {
+            index_to_assigne += 1;
+        }
+
+        index_to_assigne
     }
 }
 

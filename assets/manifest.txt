@@ -14,9 +14,9 @@ sprites/buildings/main_building/main_building_pink.png
 icons/move_arrow.png
 sprites/buildings/main_building/main_building_green.png
 sprites/buildings/main_building/main_building_neutral.png
+maps/default.map
 sprites/buildings/main_building/main_building_yellow.png
 sprites/buildings/house/house_aqua.png
 sprites/buildings/house/house_pink.png
-maps/default.map
 sprites/buildings/house/house_yellow.png
 sprites/buildings/house/house_orange.png

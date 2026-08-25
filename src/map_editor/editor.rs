@@ -1,4 +1,7 @@
-use bevy::{prelude::*, ui_widgets::ValueChange};
+use bevy::{
+    prelude::*,
+    ui_widgets::{Activate, ValueChange},
+};
 
 use crate::{
     MainCamera,
@@ -126,10 +129,10 @@ fn spawn_map(
     };
 
     commands.insert_resource(world_grid);
-    for building_info in map.building_infos() {
+    for (building_id, building_info) in map.building_infos() {
         commands.trigger(SpawnEditorBuilding {
-            building_type: building_info.building_type,
-            grid_transfrom: building_info.grid_transform,
+            building_id,
+            building_info,
         });
     }
 
@@ -177,6 +180,17 @@ pub struct AddBuilding(pub BuildingType);
 #[derive(Event)]
 struct ResizeMap {
     new_size: UVec2,
+}
+
+pub fn on_add_main_building_clicked(
+    _: On<Activate>,
+    mut commands: Commands,
+    current_map: Res<CurrentMap>,
+) {
+    let index = current_map.map.next_main_building_index();
+
+    let building_type = BuildingType::MainBuilding { index };
+    commands.trigger(AddBuilding(building_type));
 }
 
 pub fn on_update_map_width(

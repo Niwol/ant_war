@@ -17,7 +17,7 @@ use crate::{
     game::building::BuildingType,
     map_editor::{
         MapEditorState,
-        editor::{self, AddBuilding, CurrentMap, SaveMap},
+        editor::{self, AddBuilding, CurrentMap, SaveMap, on_add_main_building_clicked},
     },
     world_grid::coord::Coord,
 };
@@ -181,7 +181,7 @@ fn add_main_building_button() -> impl Scene {
             }
         }
 
-        on(add_main_building_button_clicked)
+        on(on_add_main_building_clicked)
     }
 }
 
@@ -213,10 +213,6 @@ fn main_menu_button() -> impl Scene {
 
 fn add_house_button_clicked(_: On<Activate>, mut commands: Commands) {
     commands.trigger(AddBuilding(BuildingType::House));
-}
-
-fn add_main_building_button_clicked(_: On<Activate>, mut commands: Commands) {
-    commands.trigger(AddBuilding(BuildingType::MainBuilding { index: 0 }));
 }
 
 fn save_button_clicked(_: On<Activate>, mut commands: Commands) {

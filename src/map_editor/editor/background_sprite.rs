@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 
 use crate::{
+    map::BuildingInfo,
     map_editor::{
         MapEditorEntity,
         editor::{
-            EditorState,
+            CurrentMap, EditorState,
             editor_building::{DeselectBuilding, SpawnEditorBuilding},
             preview_building::PreviewBuilding,
         },
@@ -45,6 +46,7 @@ impl BackgroundSprite {
 fn on_background_left_click(
     click: On<Pointer<Click>>,
     mut commands: Commands,
+    mut current_map: ResMut<CurrentMap>,
     mut editor_state: ResMut<EditorState>,
     preview_building: Query<(&PreviewBuilding, &GridTransform)>,
 ) {
@@ -60,9 +62,16 @@ fn on_background_left_click(
     if let Some(entity) = editor_state.add_building_preveiw {
         let (preview_building, grid_transform) = preview_building.get(entity).unwrap();
 
-        commands.trigger(SpawnEditorBuilding {
+        let building_info = BuildingInfo {
             building_type: preview_building.building_type,
-            grid_transfrom: *grid_transform,
+            grid_transform: *grid_transform,
+        };
+
+        let building_id = current_map.map.add_building(building_info);
+
+        commands.trigger(SpawnEditorBuilding {
+            building_id,
+            building_info,
         });
 
         commands.entity(entity).despawn();

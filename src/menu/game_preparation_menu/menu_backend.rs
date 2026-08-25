@@ -135,7 +135,7 @@ fn loading_map(
             .collect::<HashMap<_, _>>();
 
         game_preparation_info.building_assignements = map
-            .building_infos()
+            .building_infos_as_vec()
             .into_iter()
             .filter_map(|building_info| match building_info.building_type {
                 crate::game::building::BuildingType::House => None,

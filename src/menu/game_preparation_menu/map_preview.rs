@@ -61,7 +61,7 @@ fn spawn_preview_scene(
 
     let map = maps.get(&selected_map.handle).unwrap();
 
-    for building_info in map.building_infos() {
+    for building_info in map.building_infos_as_vec() {
         let mut grid_transform = building_info.grid_transform;
         let center = grid_transform.center_in_world();
 

@@ -108,7 +108,7 @@ fn spawn_map(
         player_refs.insert(player_info.player_id, PlayerRef(player_commands.id()));
     }
 
-    for building_info in map.building_infos() {
+    for building_info in map.building_infos_as_vec() {
         let building_info = building_info;
 
         let mut player_ref = None;

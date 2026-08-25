@@ -7,7 +7,7 @@ use crate::{
         building::{self, BuildingId, BuildingType},
         team::PlayerColor,
     },
-    map::{BuildingInfo, Map},
+    map::BuildingInfo,
     map_editor::{
         MapEditorEntity,
         editor::{CurrentMap, DragBuilding, EditorState, invalid_location::InvalidLocation},
@@ -30,8 +30,8 @@ pub struct DeselectBuilding {
 
 #[derive(Event)]
 pub struct SpawnEditorBuilding {
-    pub building_type: BuildingType,
-    pub grid_transfrom: GridTransform,
+    pub building_id: BuildingId,
+    pub building_info: BuildingInfo,
 }
 
 #[derive(SceneComponent, Default, Clone)]
@@ -97,38 +97,25 @@ impl EditorBuilding {
 fn spawn_building(
     spawn: On<SpawnEditorBuilding>,
     mut commands: Commands,
-    mut current_map: ResMut<CurrentMap>,
     mut world_grid: ResMut<WorldGrid>,
 ) {
-    let building_type = match spawn.building_type {
-        BuildingType::House => BuildingType::House,
-        BuildingType::MainBuilding { index } => {
-            let index = if index == 0 {
-                next_main_building_index(&current_map.map)
-            } else {
-                index
-            };
-            BuildingType::MainBuilding { index }
-        }
-    };
-
-    let building_id = current_map.map.add_building(BuildingInfo {
-        building_type,
-        grid_transform: spawn.grid_transfrom,
-    });
+    let SpawnEditorBuilding {
+        building_id,
+        building_info,
+    } = *spawn;
 
     let entity = commands
         .spawn_scene(bsn! {
             @EditorBuilding {
-                @building_id,
-                @building_type: building_type,
+                @building_id: {building_id},
+                @building_type: {building_info.building_type},
                 @player_color: PlayerColor::Neutral,
-                @grid_transfrom: {spawn.grid_transfrom},
+                @grid_transfrom: {building_info.grid_transform},
             }
         })
         .id();
 
-    for coord in spawn.grid_transfrom.get_coords() {
+    for coord in building_info.grid_transform.get_coords() {
         world_grid.set_cell(coord, Cell::Occupied { entity });
     }
 }
@@ -377,30 +364,4 @@ fn update_building_texts(
             }
         }
     }
-}
-
-fn next_main_building_index(map: &Map) -> usize {
-    let mut index_to_assigne = 1;
-
-    while map
-        .building_infos()
-        .iter()
-        .find(|building_info| {
-            match building_info.building_type {
-                BuildingType::House => (),
-                BuildingType::MainBuilding { index } => {
-                    if index == index_to_assigne {
-                        return true;
-                    }
-                }
-            }
-
-            false
-        })
-        .is_some()
-    {
-        index_to_assigne += 1;
-    }
-
-    index_to_assigne
 }
