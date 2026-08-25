@@ -58,7 +58,7 @@ impl Map {
         }
     }
 
-    pub fn _set_size(&mut self, size: UVec2) {
+    pub fn set_size(&mut self, size: UVec2) {
         self.map_size = size;
     }
 

@@ -5,7 +5,7 @@ use crate::{
     map_editor::{
         MapEditorEntity,
         editor::{
-            CurrentMap, EditorState,
+            CurrentMap, EditorState, ResizeMap,
             editor_building::{DeselectBuilding, SpawnEditorBuilding},
             preview_building::PreviewBuilding,
         },

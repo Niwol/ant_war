@@ -234,12 +234,28 @@ pub fn on_update_map_height(
 fn on_resize_map(
     resize: On<ResizeMap>,
     mut commands: Commands,
+    mut current_map: ResMut<CurrentMap>,
     mut world_grid: ResMut<WorldGrid>,
-    mut editor_state: ResMut<EditorState>,
     editor_buildings: Query<&EditorBuilding>,
+    background_sprite: Single<
+        (&mut Sprite, &mut Transform),
+        (With<BackgroundSprite>, Without<MainCamera>),
+    >,
+    mut camera: Single<&mut Transform, With<MainCamera>>,
 ) {
     let entities = world_grid.resize(resize.new_size);
-    editor_state.map_size = resize.new_size;
+    current_map.map.set_size(resize.new_size);
+
+    let map_center = world_grid.center();
+    let map_size_world = current_map.map.size_world();
+
+    let (mut sprite, mut transform) = background_sprite.into_inner();
+    sprite.custom_size = Some(map_size_world);
+    transform.translation.x = map_center.x;
+    transform.translation.y = map_center.y;
+
+    camera.translation.x = map_center.x;
+    camera.translation.y = map_center.y;
 
     for entity in entities {
         if editor_buildings.get(entity).is_ok() {
