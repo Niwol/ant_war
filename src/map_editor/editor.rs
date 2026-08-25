@@ -70,7 +70,6 @@ struct MapToLoad(Handle<Map>);
 
 #[derive(Resource)]
 pub struct EditorState {
-    map_size: UVec2,
     selected_building: Option<Entity>,
     add_building_preveiw: Option<Entity>,
 }
@@ -144,7 +143,6 @@ fn spawn_map(
     });
 
     commands.insert_resource(EditorState {
-        map_size: map.size(),
         selected_building: None,
         add_building_preveiw: None,
     });
