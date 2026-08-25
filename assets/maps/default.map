@@ -1,0 +1,34 @@
+(
+    map_name: "default",
+    map_size: (20, 20),
+    max_players: 2,
+    building_infos: {(3): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((16, 1)),
+        ),
+    ), (0): (
+        building_type: MainBuilding(
+            index: 1,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((1, 1)),
+        ),
+    ), (2): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((1, 16)),
+        ),
+    ), (1): (
+        building_type: MainBuilding(
+            index: 2,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((15, 15)),
+        ),
+    )},
+)
