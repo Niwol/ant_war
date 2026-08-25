@@ -1,21 +1,8 @@
-use std::path::Path;
-
-use bevy::{
-    asset::{
-        AssetPath,
-        saver::{SavedAsset, save_using_saver},
-    },
-    prelude::*,
-    tasks::IoTaskPool,
-    text::EditableText,
-    ui::InteractionDisabled,
-    ui_widgets::Activate,
-};
+use bevy::{prelude::*, text::EditableText, ui::InteractionDisabled, ui_widgets::Activate};
 
 use crate::{
     AppState,
-    manifest::{Manifest, ManifestAsset, ManifestAssetSaver},
-    map::{Map, MapCollection, MapName},
+    map::{Map, MapCollection, MapName, map_io::DeleteMap},
     map_editor::{
         MapEditorState,
         editor::{CurrentMap, LoadMap},
@@ -47,8 +34,6 @@ pub fn on_button_delete(
     mut maps: ResMut<MapCollection>,
     map_names: Query<&MapName>,
     children: Query<&ChildOf>,
-    mut manifest: ResMut<Manifest>,
-    asset_server: Res<AssetServer>,
 ) {
     let child_of = children.get(activation.entity).unwrap();
     let map_name = map_names.get(child_of.0).unwrap();
@@ -58,37 +43,7 @@ pub fn on_button_delete(
     };
 
     maps.remove(map_name.name());
-
-    manifest.remove_file(map_info.path());
-
-    let files = manifest.files().clone();
-    let mut manifest_content = String::new();
-
-    for file in files {
-        let s = format!("{file}\n");
-        manifest_content.push_str(&s);
-    }
-
-    let manifest_asset = ManifestAsset::new(manifest_content);
-    let asset_server_manifest = asset_server.clone();
-
-    IoTaskPool::get()
-        .spawn(async move {
-            match save_using_saver(
-                asset_server_manifest.clone(),
-                &ManifestAssetSaver,
-                &AssetPath::from_path(Path::new("manifest.txt")),
-                SavedAsset::from_asset(&manifest_asset),
-                &(),
-            )
-            .await
-            {
-                Ok(()) => info!("Manifest saved"),
-                Err(err) => error!("Failed to save asset: {err}"),
-            }
-        })
-        .detach();
-
+    commands.trigger(DeleteMap { map_info });
     commands.trigger(RespawnMapSelectionMenu);
 }
 

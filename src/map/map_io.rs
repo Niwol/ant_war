@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{fs, io::ErrorKind, path::Path};
 
 use bevy::{
     asset::{
@@ -22,6 +22,7 @@ pub fn plugin(app: &mut App) {
     app.init_asset_loader::<MapAssetLoader>();
 
     app.add_observer(save_map);
+    app.add_observer(delete_map);
 }
 
 #[derive(Default, TypePath)]
@@ -92,6 +93,11 @@ pub struct SaveMap {
     pub map_info: MapInfo,
 }
 
+#[derive(Event)]
+pub struct DeleteMap {
+    pub map_info: MapInfo,
+}
+
 fn save_map(
     save_map: On<SaveMap>,
     maps: Res<Assets<Map>>,
@@ -144,7 +150,8 @@ fn save_map(
 
         manifest.insert_file(map_info.path());
 
-        let files = manifest.files().clone();
+        let mut files = manifest.files().iter().collect::<Vec<_>>();
+        files.sort();
         let mut manifest_content = String::new();
 
         for file in files {
@@ -170,5 +177,61 @@ fn save_map(
                 }
             })
             .detach();
+    }
+}
+
+fn delete_map(
+    delete_map: On<DeleteMap>,
+    mut manifest: ResMut<Manifest>,
+    asset_server: Res<AssetServer>,
+) {
+    let map_info = delete_map.map_info.clone();
+    let file_path = map_info.path();
+
+    manifest.remove_file(file_path.clone());
+    let mut files = manifest.files().iter().collect::<Vec<_>>();
+    files.sort();
+    let mut manifest_content = String::new();
+
+    for file in files {
+        let s = format!("{file}\n");
+        manifest_content.push_str(&s);
+    }
+
+    let manifest_asset = ManifestAsset::new(manifest_content);
+    let asset_server_manifest = asset_server.clone();
+
+    IoTaskPool::get()
+        .spawn(async move {
+            match save_using_saver(
+                asset_server_manifest.clone(),
+                &ManifestAssetSaver,
+                &AssetPath::from_path(Path::new("manifest.txt")),
+                SavedAsset::from_asset(&manifest_asset),
+                &(),
+            )
+            .await
+            {
+                Ok(()) => info!("Manifest saved"),
+                Err(err) => error!("Failed to save asset: {err}"),
+            }
+        })
+        .detach();
+
+    let file_path = format!("assets/{}", file_path);
+    let meta_file_path = format!("{file_path}.meta");
+
+    match fs::remove_file(Path::new(&file_path)) {
+        Ok(_) => info!("File deleted"),
+        Err(err) => warn!("Could not delete file: {err}"),
+    }
+
+    match fs::remove_file(Path::new(&meta_file_path)) {
+        Ok(_) => info!("Meta file deleted"),
+        Err(err) => {
+            if err.kind() != ErrorKind::NotFound {
+                warn!("Could not delete file: {err}");
+            }
+        }
     }
 }
