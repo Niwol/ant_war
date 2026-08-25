@@ -6,15 +6,12 @@ sprites/buildings/house/house_red.png
 sprites/buildings/house/house_neutral.png
 icons/cross.png
 sprites/buildings/house/house_purple.png
-maps/plop.map
 manifest.txt
 sprites/buildings/house/house_blue.png
 sprites/buildings/main_building/main_building_purple.png
 sprites/buildings/main_building/main_building_orange.png
 sprites/buildings/main_building/main_building_pink.png
 icons/move_arrow.png
-maps/map_1.map
-maps/map_2.map
 sprites/buildings/main_building/main_building_green.png
 sprites/buildings/main_building/main_building_neutral.png
 sprites/buildings/main_building/main_building_yellow.png
