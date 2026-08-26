@@ -4,7 +4,7 @@ use crate::{
     AppState, MainCamera,
     game::{
         ant::AntPlugin,
-        bot::{Bot, BotPlugin},
+        bot::{Bot, BotPlugin, brain::Brain},
         building::{BuildingPlugin, BuildingType, SpawnBuilding},
         game_info::GameInfoPlugin,
         input::InputPlugin,
@@ -102,7 +102,7 @@ fn spawn_map(
         });
 
         if player_info.bot {
-            player_commands.insert(Bot);
+            player_commands.insert(Bot::new(Brain::simple()));
         }
 
         player_refs.insert(player_info.player_id, PlayerRef(player_commands.id()));

@@ -96,6 +96,12 @@ pub struct Building {
     grow_timer: Timer,
 }
 
+impl Building {
+    pub fn max_inhabitants(&self) -> i32 {
+        self.max_inhabitants
+    }
+}
+
 #[derive(Component, Serialize, Deserialize, Default, Clone, Copy, Hash, PartialEq, Eq)]
 pub struct BuildingId(usize);
 
@@ -129,8 +135,8 @@ impl BuildingType {
 
 #[derive(QueryData)]
 pub struct BuildingTypeQueryData {
-    house: Option<&'static HouseMarker>,
-    main_building: Option<&'static MainBuilding>,
+    pub house: Option<&'static HouseMarker>,
+    pub main_building: Option<&'static MainBuilding>,
 }
 
 #[derive(Event)]

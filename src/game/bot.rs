@@ -1,47 +1,55 @@
 use bevy::prelude::*;
 
 use crate::game::{
-    building::{Building, inhabitants::Inhabitants},
+    bot::{
+        bot_view::{BotView, BotViewPlugin},
+        brain::Brain,
+    },
     game_info::GameState,
     input::MoveOrder,
-    team::PlayerRef,
 };
 
 pub struct BotPlugin;
 impl Plugin for BotPlugin {
     fn build(&self, app: &mut App) {
+        app.add_plugins(BotViewPlugin);
+
         app.add_systems(
             Update,
-            update_bots.run_if(in_state(GameState::Playing { paused: false })),
+            bot_actions.run_if(in_state(GameState::Playing { paused: false })),
         );
     }
 }
 
-#[derive(Component, Default, Clone, Copy)]
-pub struct Bot;
+pub mod bot_view;
+pub mod brain;
 
-fn update_bots(
-    mut commands: Commands,
-    bots: Query<Entity, With<Bot>>,
-    player_buildings: Query<(Entity, &PlayerRef, &Inhabitants), With<Building>>,
-    all_buildings: Query<(Entity, Option<&PlayerRef>), With<Building>>,
-) {
-    for bot in &bots {
-        for (building_entity, building_ref, inhabitants) in &player_buildings {
-            if bot == building_ref.0 && inhabitants.total() >= 15 {
-                for (other_building_entity, other_building_ref) in &all_buildings {
-                    if let Some(other_building_ref) = other_building_ref
-                        && other_building_ref.0 == bot
-                    {
-                        continue;
-                    }
+#[derive(Component, Default, Clone)]
+#[require(BotView)]
+pub struct Bot {
+    brain: Brain,
+}
 
-                    commands.trigger(MoveOrder {
-                        entity: building_entity,
-                        target: other_building_entity,
-                    });
-                    break;
-                }
+impl Bot {
+    pub fn new(brain: Brain) -> Self {
+        Self { brain }
+    }
+}
+
+fn bot_actions(mut commands: Commands, bots: Query<(&Bot, &BotView)>) {
+    for (bot, bot_view) in &bots {
+        let bot_action = bot.brain.take_action(bot_view);
+
+        match bot_action {
+            brain::BotAction::None => (),
+            brain::BotAction::MoveOrder {
+                source_building,
+                target_building,
+            } => {
+                commands.trigger(MoveOrder {
+                    entity: source_building,
+                    target: target_building,
+                });
             }
         }
     }
