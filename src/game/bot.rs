@@ -5,8 +5,8 @@ use crate::game::{
         bot_view::{BotView, BotViewPlugin},
         brain::Brain,
     },
+    building::MoveOrder,
     game_info::GameState,
-    input::MoveOrder,
 };
 
 pub struct BotPlugin;

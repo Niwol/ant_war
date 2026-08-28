@@ -1,0 +1,274 @@
+(
+    map_name: "Challenge Hard",
+    map_size: (60, 60),
+    max_players: 2,
+    building_infos: {(36): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((34, 51)),
+        ),
+    ), (31): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((51, 18)),
+        ),
+    ), (34): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 51)),
+        ),
+    ), (6): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((51, 41)),
+        ),
+    ), (1): (
+        building_type: MainBuilding(
+            index: 2,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((54, 29)),
+        ),
+    ), (15): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((23, 34)),
+        ),
+    ), (29): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((37, 18)),
+        ),
+    ), (8): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((37, 41)),
+        ),
+    ), (13): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((9, 34)),
+        ),
+    ), (17): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((37, 34)),
+        ),
+    ), (32): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((55, 18)),
+        ),
+    ), (33): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((55, 41)),
+        ),
+    ), (10): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((23, 41)),
+        ),
+    ), (16): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 34)),
+        ),
+    ), (3): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((51, 34)),
+        ),
+    ), (43): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 4)),
+        ),
+    ), (24): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((9, 25)),
+        ),
+    ), (18): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((44, 34)),
+        ),
+    ), (22): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((23, 25)),
+        ),
+    ), (39): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 12)),
+        ),
+    ), (20): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((37, 25)),
+        ),
+    ), (5): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((55, 25)),
+        ),
+    ), (41): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((26, 8)),
+        ),
+    ), (14): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((16, 34)),
+        ),
+    ), (23): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((16, 25)),
+        ),
+    ), (7): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((44, 41)),
+        ),
+    ), (9): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 41)),
+        ),
+    ), (30): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((44, 18)),
+        ),
+    ), (12): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((9, 41)),
+        ),
+    ), (37): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 55)),
+        ),
+    ), (35): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((26, 51)),
+        ),
+    ), (42): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((34, 8)),
+        ),
+    ), (11): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((16, 41)),
+        ),
+    ), (26): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((16, 18)),
+        ),
+    ), (28): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 18)),
+        ),
+    ), (27): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((23, 18)),
+        ),
+    ), (40): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 8)),
+        ),
+    ), (0): (
+        building_type: MainBuilding(
+            index: 1,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((2, 29)),
+        ),
+    ), (19): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((44, 25)),
+        ),
+    ), (25): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((9, 18)),
+        ),
+    ), (4): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((51, 25)),
+        ),
+    ), (21): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 25)),
+        ),
+    ), (2): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((55, 34)),
+        ),
+    ), (38): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((30, 47)),
+        ),
+    )},
+)

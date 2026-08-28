@@ -3,6 +3,7 @@ icons/move_arrow.png
 manifest.txt
 maps/Challenge 1.map
 maps/Challenge 2.map
+maps/Challenge Hard.map
 maps/Map 1.map
 maps/Map 2.map
 sprites/buildings/house/house_aqua.png

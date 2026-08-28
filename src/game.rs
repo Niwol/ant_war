@@ -143,7 +143,6 @@ fn spawn_map(
             building_id,
             building_type: building_info.building_type,
             grid_transform: building_info.grid_transform,
-            inhabitants: 5,
         });
     }
 

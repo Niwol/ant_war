@@ -5,18 +5,23 @@ use crate::{
     game::{
         InGameEntity,
         ant::ant_spawner::SapwnAntSpawner,
+        bot::Bot,
         building::{
-            asset_paths::*, house::HouseMarker, inhabitants::Inhabitants,
+            asset_paths::*,
+            building_selection::{BuildingSelectionPlugin, SelectedBuildings},
+            house::HouseMarker,
+            inhabitants::Inhabitants,
             main_building::MainBuilding,
         },
         game_info::GameState,
-        input::{self, MoveOrder},
+        input::{self, InputMoveOrder},
         team::{Player, PlayerColor, PlayerRef},
     },
     world_grid::grid_transform::GridTransform,
 };
 
 pub mod asset_paths;
+pub mod building_selection;
 pub mod house;
 pub mod inhabitants;
 mod main_building;
@@ -24,7 +29,12 @@ mod main_building;
 pub struct BuildingPlugin;
 impl Plugin for BuildingPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((house::plugin, main_building::plugin, inhabitants::plugin));
+        app.add_plugins((
+            house::plugin,
+            main_building::plugin,
+            inhabitants::plugin,
+            BuildingSelectionPlugin,
+        ));
 
         app.add_systems(Startup, load_building_sprites);
 
@@ -35,6 +45,7 @@ impl Plugin for BuildingPlugin {
         app.add_systems(Update, player_changed);
 
         app.add_observer(spawn_building);
+        app.add_observer(on_input_move_order);
     }
 }
 
@@ -86,6 +97,12 @@ fn load_building_sprites(mut commands: Commands, assets: Res<AssetServer>) {
     };
 
     commands.insert_resource(building_sprites);
+}
+
+#[derive(EntityEvent)]
+pub struct MoveOrder {
+    pub entity: Entity,
+    pub target: Entity,
 }
 
 #[derive(Component, Default, Clone)]
@@ -144,17 +161,14 @@ pub struct SpawnBuilding {
     pub building_id: BuildingId,
     pub building_type: BuildingType,
     pub grid_transform: GridTransform,
-    pub inhabitants: i32,
 }
 
 fn spawn_building(spawn: On<SpawnBuilding>, mut commands: Commands) {
-    let inhabitants = spawn.inhabitants;
-
     let mut building = commands.spawn_scene(bsn! {
         Building
         template_value(spawn.building_id)
 
-        Inhabitants::new(inhabitants)
+        Inhabitants::new(0)
 
         template_value(spawn.grid_transform)
     });
@@ -229,5 +243,24 @@ fn player_changed(
         let image_handle = building_sprites.get(building_type, player_color);
 
         sprite.image = image_handle;
+    }
+}
+
+fn on_input_move_order(
+    order: On<InputMoveOrder>,
+    mut commands: Commands,
+    selected_buildings: Res<SelectedBuildings>,
+    buildings: Query<&PlayerRef, With<Building>>,
+    players: Query<Entity, (With<Player>, Without<Bot>)>,
+) {
+    for selected_building in &selected_buildings.buildings {
+        if let Ok(player_ref) = buildings.get(*selected_building) {
+            if players.contains(player_ref.0) {
+                commands.trigger(MoveOrder {
+                    entity: *selected_building,
+                    target: order.target,
+                });
+            }
+        }
     }
 }

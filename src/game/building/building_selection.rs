@@ -1,0 +1,172 @@
+use bevy::{color::palettes::css::WHITE, prelude::*};
+
+use crate::{
+    AppState,
+    game::{
+        bot::Bot,
+        building::Building,
+        team::{Player, PlayerRef},
+    },
+};
+
+pub struct BuildingSelectionPlugin;
+impl Plugin for BuildingSelectionPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(OnEnter(AppState::InGame), add_selected_buildings_ressource);
+        app.add_systems(
+            OnExit(AppState::InGame),
+            remove_selected_buildings_ressource,
+        );
+
+        app.add_systems(Update, on_player_change);
+
+        app.add_observer(on_select_building);
+        app.add_observer(on_deselect_building);
+        app.add_observer(on_add_building_selected);
+        app.add_observer(on_remove_building_selected);
+    }
+}
+
+#[derive(Event)]
+pub struct SelectBuilding {
+    pub building: Entity,
+    pub selection_kind: BuildingSelectionKind,
+}
+
+#[derive(Event)]
+pub struct DeselectBuilding {
+    pub building: Entity,
+}
+
+pub enum BuildingSelectionKind {
+    SingleSelection,
+    AddSelection,
+}
+
+#[derive(Resource)]
+pub struct SelectedBuildings {
+    pub buildings: Vec<Entity>,
+}
+
+fn add_selected_buildings_ressource(mut commands: Commands) {
+    commands.insert_resource(SelectedBuildings {
+        buildings: Vec::new(),
+    });
+}
+
+fn remove_selected_buildings_ressource(mut commands: Commands) {
+    commands.remove_resource::<SelectedBuildings>();
+}
+
+#[derive(Component, Default, Clone)]
+pub struct BuildingSelected;
+
+#[derive(Component, Default, Clone)]
+struct BuildingSelectionUi;
+
+fn on_select_building(
+    select: On<SelectBuilding>,
+    mut commands: Commands,
+    mut selected_buildings: ResMut<SelectedBuildings>,
+    buildings: Query<Option<&PlayerRef>, With<Building>>,
+    players: Query<Entity, (With<Player>, Without<Bot>)>,
+) {
+    match select.selection_kind {
+        BuildingSelectionKind::SingleSelection => {
+            for entity in &selected_buildings.buildings {
+                commands.entity(*entity).remove::<BuildingSelected>();
+            }
+            selected_buildings.buildings.clear();
+
+            commands.entity(select.building).insert(BuildingSelected);
+            selected_buildings.buildings.push(select.building);
+        }
+        BuildingSelectionKind::AddSelection => {
+            if !selected_buildings.buildings.iter().all(|building| {
+                let player_ref = buildings.get(*building).unwrap();
+                if let Some(player_ref) = player_ref
+                    && players.contains(player_ref.0)
+                {
+                    return true;
+                }
+                false
+            }) {
+                return;
+            }
+
+            let player_ref = buildings.get(select.building).unwrap();
+            if let Some(player_ref) = player_ref
+                && players.contains(player_ref.0)
+            {
+                commands.entity(select.building).insert(BuildingSelected);
+                selected_buildings.buildings.push(select.building);
+            }
+        }
+    };
+}
+
+fn on_deselect_building(
+    deselect: On<DeselectBuilding>,
+    mut commands: Commands,
+    mut selected_buildings: ResMut<SelectedBuildings>,
+) {
+    if let Some(index) = selected_buildings
+        .buildings
+        .iter()
+        .position(|entity| *entity == deselect.building)
+    {
+        selected_buildings.buildings.swap_remove(index);
+        commands
+            .entity(deselect.building)
+            .remove::<BuildingSelected>();
+    }
+}
+
+fn on_player_change(mut commands: Commands, buildings: Query<Entity, Changed<PlayerRef>>) {
+    for building in buildings {
+        commands.trigger(DeselectBuilding { building });
+    }
+}
+
+fn on_add_building_selected(
+    add: On<Add, BuildingSelected>,
+    mut commands: Commands,
+    sprites: Query<&Sprite, With<Building>>,
+    images: Res<Assets<Image>>,
+) {
+    let sprite = sprites.get(add.entity).unwrap();
+
+    let sprite_size = if let Some(custom_size) = sprite.custom_size {
+        custom_size
+    } else if let Some(image) = images.get(&sprite.image) {
+        image.size_f32()
+    } else {
+        warn!("Building somehow does not have a sprite or a custom size");
+        Vec2::ONE
+    };
+
+    let selection_ui = commands
+        .spawn_scene(bsn! {
+            BuildingSelectionUi
+            Sprite {
+                custom_size: {Some(Vec2 { x: sprite_size.x, y: 2.0 })},
+                color: WHITE
+            }
+            Transform::from_xyz(0.0, -(sprite_size.y / 2.0 + 5.0), 0.0)
+        })
+        .id();
+
+    commands.entity(add.entity).add_child(selection_ui);
+}
+
+fn on_remove_building_selected(
+    remove: On<Remove, BuildingSelected>,
+    mut commands: Commands,
+    selection_uis: Query<(Entity, &ChildOf), With<BuildingSelectionUi>>,
+) {
+    for (entity, child_of) in &selection_uis {
+        if child_of.0 == remove.entity {
+            commands.entity(entity).despawn();
+        }
+    }
+}

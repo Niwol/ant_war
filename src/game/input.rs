@@ -4,10 +4,11 @@ use crate::{
     AppState,
     game::{
         InGameEntity,
-        bot::Bot,
-        building::Building,
+        building::{
+            Building,
+            building_selection::{BuildingSelectionKind, SelectBuilding},
+        },
         game_info::GameState,
-        team::{Player, PlayerRef},
     },
 };
 
@@ -21,9 +22,8 @@ impl Plugin for InputPlugin {
     }
 }
 
-#[derive(EntityEvent)]
-pub struct MoveOrder {
-    pub entity: Entity,
+#[derive(Event)]
+pub struct InputMoveOrder {
     pub target: Entity,
 }
 
@@ -57,35 +57,38 @@ fn spawn_deselection_sprite(mut commands: Commands) {
         );
 }
 
-pub fn on_select(click: On<Pointer<Click>>, mut selected_building: ResMut<SelectedBuilding>) {
+pub fn on_select(
+    click: On<Pointer<Click>>,
+    mut commands: Commands,
+    input: Res<ButtonInput<KeyCode>>,
+) {
     if click.button == PointerButton::Primary {
-        selected_building.building = Some(click.entity);
+        let mut select_buildign = SelectBuilding {
+            building: click.entity,
+            selection_kind: BuildingSelectionKind::SingleSelection,
+        };
+
+        if input.pressed(KeyCode::ShiftLeft) {
+            select_buildign.selection_kind = BuildingSelectionKind::AddSelection;
+        }
+
+        commands.trigger(select_buildign);
     }
 }
 
 pub fn on_order(
     click: On<Pointer<Click>>,
-    selected_building: Res<SelectedBuilding>,
-    buildings: Query<Option<&PlayerRef>, With<Building>>,
-    players: Query<&Player, Without<Bot>>,
+    buildings: Query<Entity, With<Building>>,
     mut commands: Commands,
 ) {
     if click.button != PointerButton::Secondary {
         return;
     }
 
-    if let Some(building) = selected_building.building {
-        let building_ref = buildings.get(building).unwrap();
-        let Some(building_ref) = building_ref else {
-            return;
-        };
-
-        if players.contains(building_ref.0) {
-            commands.trigger(MoveOrder {
-                entity: selected_building.building.unwrap(),
-                target: click.entity,
-            });
-        }
+    if buildings.contains(click.entity) {
+        commands.trigger(InputMoveOrder {
+            target: click.entity,
+        });
     }
 }
 
