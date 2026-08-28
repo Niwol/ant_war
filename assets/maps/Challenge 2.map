@@ -1,0 +1,112 @@
+(
+    map_name: "Challenge 2",
+    map_size: (50, 30),
+    max_players: 2,
+    building_infos: {(14): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((34, 16)),
+        ),
+    ), (7): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((45, 8)),
+        ),
+    ), (9): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((45, 4)),
+        ),
+    ), (1): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((3, 19)),
+        ),
+    ), (12): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((39, 16)),
+        ),
+    ), (15): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((34, 11)),
+        ),
+    ), (6): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((45, 19)),
+        ),
+    ), (8): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((45, 23)),
+        ),
+    ), (13): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((39, 11)),
+        ),
+    ), (11): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((41, 21)),
+        ),
+    ), (10): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((41, 6)),
+        ),
+    ), (16): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((10, 13)),
+        ),
+    ), (3): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((8, 22)),
+        ),
+    ), (0): (
+        building_type: MainBuilding(
+            index: 1,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((2, 13)),
+        ),
+    ), (4): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((8, 5)),
+        ),
+    ), (5): (
+        building_type: MainBuilding(
+            index: 2,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((44, 13)),
+        ),
+    ), (2): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((3, 8)),
+        ),
+    )},
+)

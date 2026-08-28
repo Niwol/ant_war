@@ -1,0 +1,46 @@
+(
+    map_name: "Map 2",
+    map_size: (50, 30),
+    max_players: 2,
+    building_infos: {(5): (
+        building_type: MainBuilding(
+            index: 2,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((44, 13)),
+        ),
+    ), (3): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((29, 9)),
+        ),
+    ), (4): (
+        building_type: MainBuilding(
+            index: 1,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((2, 13)),
+        ),
+    ), (0): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((19, 18)),
+        ),
+    ), (2): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((19, 9)),
+        ),
+    ), (1): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((29, 18)),
+        ),
+    )},
+)

@@ -1,12 +1,12 @@
 (
-    map_name: "map_3",
-    map_size: (50, 30),
+    map_name: "Challenge 1",
+    map_size: (50, 20),
     max_players: 2,
     building_infos: {(3): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((9, 10)),
+            bottom_left_coord: ((11, 3)),
         ),
     ), (0): (
         building_type: MainBuilding(
@@ -14,19 +14,13 @@
         ),
         grid_transform: (
             size: (4, 4),
-            bottom_left_coord: ((3, 13)),
+            bottom_left_coord: ((2, 8)),
         ),
     ), (7): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((40, 8)),
-        ),
-    ), (6): (
-        building_type: House,
-        grid_transform: (
-            size: (3, 3),
-            bottom_left_coord: ((38, 14)),
+            bottom_left_coord: ((45, 4)),
         ),
     ), (1): (
         building_type: MainBuilding(
@@ -34,25 +28,37 @@
         ),
         grid_transform: (
             size: (4, 4),
-            bottom_left_coord: ((44, 14)),
+            bottom_left_coord: ((44, 8)),
+        ),
+    ), (6): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((41, 13)),
         ),
     ), (4): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((40, 20)),
+            bottom_left_coord: ((15, 9)),
+        ),
+    ), (8): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((41, 4)),
         ),
     ), (5): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((31, 14)),
+            bottom_left_coord: ((45, 13)),
         ),
     ), (2): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((9, 16)),
+            bottom_left_coord: ((11, 15)),
         ),
     )},
 )

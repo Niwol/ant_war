@@ -91,10 +91,6 @@ fn update_inhabitants_text(
     mut inhabitants: Query<(&mut Inhabitants, &Children)>,
 ) {
     for (mut inhabitants, children) in &mut inhabitants {
-        if inhabitants.total == inhabitants.to_print {
-            continue;
-        }
-
         if inhabitants.total < inhabitants.to_print {
             inhabitants.to_print -= 1;
         } else if inhabitants.total > inhabitants.to_print {

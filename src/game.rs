@@ -6,7 +6,7 @@ use crate::{
         ant::AntPlugin,
         bot::{Bot, BotPlugin, brain::Brain},
         building::{BuildingPlugin, BuildingType, SpawnBuilding},
-        game_info::GameInfoPlugin,
+        game_info::{GameInfoPlugin, StartGameInfo},
         input::InputPlugin,
         team::{Player, PlayerRef, Team},
     },
@@ -69,8 +69,13 @@ pub struct SpawnMap {
 fn start_game(
     start_game: On<StartGame>,
     mut commands: Commands,
+    mut window: Single<&mut Window>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
+    let map_size = start_game.map.size_world();
+
+    window.resolution.set(map_size.x + 50.0, map_size.y + 50.0);
+
     commands.trigger(SpawnMap {
         map: start_game.map.clone(),
         game_preparation_info: start_game.game_preparation_info.clone(),
@@ -84,6 +89,10 @@ fn spawn_map(
     camera_transform: Single<&mut Transform, With<MainCamera>>,
 ) {
     let map = spawn_map.map.clone();
+    let mut start_game_info = StartGameInfo {
+        players: Vec::new(),
+        building_assignements: HashMap::new(),
+    };
 
     let world_grid = WorldGrid::new(map.size());
     let map_center = world_grid.center();
@@ -105,10 +114,14 @@ fn spawn_map(
             player_commands.insert(Bot::new(Brain::simple()));
         }
 
-        player_refs.insert(player_info.player_id, PlayerRef(player_commands.id()));
+        let player_entity = player_commands.id();
+
+        start_game_info.players.push(player_entity);
+
+        player_refs.insert(player_info.player_id, PlayerRef(player_entity));
     }
 
-    for building_info in map.building_infos_as_vec() {
+    for (building_id, building_info) in map.building_infos() {
         let building_info = building_info;
 
         let mut player_ref = None;
@@ -120,11 +133,19 @@ fn spawn_map(
             }
         }
 
+        if let Some(player_ref) = player_ref {
+            start_game_info
+                .building_assignements
+                .insert(building_id, player_ref);
+        }
+
         commands.trigger(SpawnBuilding {
+            building_id,
             building_type: building_info.building_type,
-            player_ref: player_ref,
             grid_transform: building_info.grid_transform,
             inhabitants: 5,
         });
     }
+
+    commands.insert_resource(start_game_info);
 }

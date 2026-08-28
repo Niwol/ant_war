@@ -89,6 +89,7 @@ fn map_editor_button() -> impl Scene {
 }
 
 fn exit_button() -> impl Scene {
+    #[cfg(not(target_family = "wasm"))]
     bsn! {
         @FeathersButton {
             @caption: bsn! {

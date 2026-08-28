@@ -52,6 +52,16 @@ fn spawn_game_over_ui(mut commands: Commands, end_game_info: Res<EndGameInfo>) {
             (
                 @FeathersButton {
                     @caption: bsn! {
+                        Text::new("Restart")
+                        ThemedText
+                    }
+                }
+                on(restart_button_clicked)
+            ),
+
+            (
+                @FeathersButton {
+                    @caption: bsn! {
                         Text::new("Main Menu")
                         ThemedText
                     }
@@ -60,6 +70,10 @@ fn spawn_game_over_ui(mut commands: Commands, end_game_info: Res<EndGameInfo>) {
             ),
         ]
     });
+}
+
+fn restart_button_clicked(_: On<Activate>, mut next_state: ResMut<NextState<GameState>>) {
+    next_state.set(GameState::StartingDecount);
 }
 
 fn back_to_main_menu(_: On<Activate>, mut next_state: ResMut<NextState<AppState>>) {

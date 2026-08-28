@@ -41,7 +41,8 @@ pub enum MenuState {
     GamePreparation,
 }
 
-fn spawn_main_menu(mut commands: Commands) {
+fn spawn_main_menu(mut commands: Commands, mut window: Single<&mut Window>) {
+    window.resolution.set(1000.0, 800.0);
     commands.spawn_scene(main_menu::main_menu());
 }
 

@@ -31,18 +31,17 @@ pub fn on_button_edit(
 pub fn on_button_delete(
     activation: On<Activate>,
     mut commands: Commands,
-    mut maps: ResMut<MapCollection>,
+    map_collection: Res<MapCollection>,
     map_names: Query<&MapName>,
     children: Query<&ChildOf>,
 ) {
     let child_of = children.get(activation.entity).unwrap();
     let map_name = map_names.get(child_of.0).unwrap();
 
-    let Some(map_info) = maps.map_info(map_name.name()) else {
+    let Some(map_info) = map_collection.map_info(map_name.name()) else {
         return;
     };
 
-    maps.remove(map_name.name());
     commands.trigger(DeleteMap { map_info });
     commands.trigger(RespawnMapSelectionMenu);
 }

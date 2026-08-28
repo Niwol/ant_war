@@ -111,16 +111,14 @@ fn save_map(
         map::MapAccess::AssetPath(_) => unreachable!("The map access must be a handle"),
     };
 
-    info!("Todo: only save map on desktop version");
-    {
-        let asset_path = map_info.path();
-        map_info.map_access = MapAccess::AssetPath(asset_path);
-    }
-
     let map_name = map_info.map_name.clone();
     map_collection.0.insert(map_name, map_info.clone());
 
+    #[cfg(not(target_family = "wasm"))]
     {
+        let asset_path = map_info.path();
+        map_info.map_access = MapAccess::AssetPath(asset_path);
+
         let map = maps.get(&handle).unwrap().clone();
         let asset_path = map_info.path();
         map_info.map_access = MapAccess::AssetPath(asset_path.clone());
@@ -182,55 +180,61 @@ fn save_map(
 
 fn delete_map(
     delete_map: On<DeleteMap>,
+    mut map_collection: ResMut<MapCollection>,
     mut manifest: ResMut<Manifest>,
     asset_server: Res<AssetServer>,
 ) {
     let map_info = delete_map.map_info.clone();
-    let file_path = map_info.path();
+    map_collection.remove(map_info.map_name());
 
-    manifest.remove_file(file_path.clone());
-    let mut files = manifest.files().iter().collect::<Vec<_>>();
-    files.sort();
-    let mut manifest_content = String::new();
+    #[cfg(not(target_family = "wasm"))]
+    {
+        let file_path = map_info.path();
 
-    for file in files {
-        let s = format!("{file}\n");
-        manifest_content.push_str(&s);
-    }
+        manifest.remove_file(file_path.clone());
+        let mut files = manifest.files().iter().collect::<Vec<_>>();
+        files.sort();
+        let mut manifest_content = String::new();
 
-    let manifest_asset = ManifestAsset::new(manifest_content);
-    let asset_server_manifest = asset_server.clone();
+        for file in files {
+            let s = format!("{file}\n");
+            manifest_content.push_str(&s);
+        }
 
-    IoTaskPool::get()
-        .spawn(async move {
-            match save_using_saver(
-                asset_server_manifest.clone(),
-                &ManifestAssetSaver,
-                &AssetPath::from_path(Path::new("manifest.txt")),
-                SavedAsset::from_asset(&manifest_asset),
-                &(),
-            )
-            .await
-            {
-                Ok(()) => info!("Manifest saved"),
-                Err(err) => error!("Failed to save asset: {err}"),
-            }
-        })
-        .detach();
+        let manifest_asset = ManifestAsset::new(manifest_content);
+        let asset_server_manifest = asset_server.clone();
 
-    let file_path = format!("assets/{}", file_path);
-    let meta_file_path = format!("{file_path}.meta");
+        IoTaskPool::get()
+            .spawn(async move {
+                match save_using_saver(
+                    asset_server_manifest.clone(),
+                    &ManifestAssetSaver,
+                    &AssetPath::from_path(Path::new("manifest.txt")),
+                    SavedAsset::from_asset(&manifest_asset),
+                    &(),
+                )
+                .await
+                {
+                    Ok(()) => info!("Manifest saved"),
+                    Err(err) => error!("Failed to save asset: {err}"),
+                }
+            })
+            .detach();
 
-    match fs::remove_file(Path::new(&file_path)) {
-        Ok(_) => info!("File deleted"),
-        Err(err) => warn!("Could not delete file: {err}"),
-    }
+        let file_path = format!("assets/{}", file_path);
+        let meta_file_path = format!("{file_path}.meta");
 
-    match fs::remove_file(Path::new(&meta_file_path)) {
-        Ok(_) => info!("Meta file deleted"),
-        Err(err) => {
-            if err.kind() != ErrorKind::NotFound {
-                warn!("Could not delete file: {err}");
+        match fs::remove_file(Path::new(&file_path)) {
+            Ok(_) => info!("File deleted"),
+            Err(err) => warn!("Could not delete file: {err}"),
+        }
+
+        match fs::remove_file(Path::new(&meta_file_path)) {
+            Ok(_) => info!("Meta file deleted"),
+            Err(err) => {
+                if err.kind() != ErrorKind::NotFound {
+                    warn!("Could not delete file: {err}");
+                }
             }
         }
     }

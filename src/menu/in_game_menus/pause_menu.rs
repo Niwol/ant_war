@@ -57,6 +57,16 @@ fn spawn_pause_menu(mut commands: Commands) {
             (
                 @FeathersButton {
                     @caption: bsn! {
+                        Text::new("Restart")
+                        ThemedText
+                    }
+                }
+                on(on_restart_button_clicked)
+            ),
+
+            (
+                @FeathersButton {
+                    @caption: bsn! {
                         Text::new("Main Menu")
                         ThemedText
                     }
@@ -73,6 +83,10 @@ fn despawn_pause_menu(mut commands: Commands, pause_menu: Single<Entity, With<Pa
 
 fn on_resume_button_clicked(_: On<Activate>, mut next_state: ResMut<NextState<GameState>>) {
     next_state.set(GameState::Playing { paused: false });
+}
+
+fn on_restart_button_clicked(_: On<Activate>, mut next_state: ResMut<NextState<GameState>>) {
+    next_state.set(GameState::StartingDecount);
 }
 
 fn on_main_menu_button_clicked(_: On<Activate>, mut next_state: ResMut<NextState<AppState>>) {

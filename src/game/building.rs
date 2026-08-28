@@ -141,8 +141,8 @@ pub struct BuildingTypeQueryData {
 
 #[derive(Event)]
 pub struct SpawnBuilding {
+    pub building_id: BuildingId,
     pub building_type: BuildingType,
-    pub player_ref: Option<PlayerRef>,
     pub grid_transform: GridTransform,
     pub inhabitants: i32,
 }
@@ -152,15 +152,12 @@ fn spawn_building(spawn: On<SpawnBuilding>, mut commands: Commands) {
 
     let mut building = commands.spawn_scene(bsn! {
         Building
+        template_value(spawn.building_id)
 
         Inhabitants::new(inhabitants)
 
         template_value(spawn.grid_transform)
     });
-
-    if let Some(player_ref) = &spawn.player_ref {
-        building.insert(player_ref.clone());
-    }
 
     match spawn.building_type {
         BuildingType::House => building.insert(HouseMarker),
@@ -210,10 +207,7 @@ fn building_grow(
 
 fn player_changed(
     players: Query<&Player>,
-    mut sprites: Query<
-        (&mut Sprite, Option<&PlayerRef>, BuildingTypeQueryData),
-        (With<Building>, Changed<PlayerRef>),
-    >,
+    mut sprites: Query<(&mut Sprite, Option<&PlayerRef>, BuildingTypeQueryData), With<Building>>,
 
     building_sprites: Res<BuildingSprites>,
 ) {

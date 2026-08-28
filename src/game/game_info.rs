@@ -1,6 +1,9 @@
-use bevy::prelude::*;
+use bevy::{platform::collections::HashMap, prelude::*};
 
-use crate::AppState;
+use crate::{
+    AppState,
+    game::{building::BuildingId, team::PlayerRef},
+};
 
 pub mod end_game;
 mod starting_decount;
@@ -24,4 +27,10 @@ pub enum GameState {
     },
 
     GameOver,
+}
+
+#[derive(Resource)]
+pub struct StartGameInfo {
+    pub players: Vec<Entity>,
+    pub building_assignements: HashMap<BuildingId, PlayerRef>,
 }

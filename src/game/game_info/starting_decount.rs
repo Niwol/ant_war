@@ -1,9 +1,20 @@
 use bevy::prelude::*;
 
-use crate::{game::game_info::GameState, world_grid::WorldGrid};
+use crate::{
+    game::{
+        ant::{Ant, ant_spawner::AntSpawner},
+        building::{BuildingId, inhabitants::Inhabitants},
+        game_info::{GameState, StartGameInfo, end_game::EndGameInfo},
+        team::PlayerRef,
+    },
+    world_grid::WorldGrid,
+};
 
 pub fn plugin(app: &mut App) {
-    app.add_systems(OnEnter(GameState::StartingDecount), add_starting_decount);
+    app.add_systems(
+        OnEnter(GameState::StartingDecount),
+        (add_starting_decount, init_game),
+    );
     app.add_systems(OnExit(GameState::StartingDecount), remove_starting_decount);
     app.add_systems(
         Update,
@@ -59,4 +70,32 @@ fn update_starting_decount(
     } else {
         next_state.set(GameState::Playing { paused: false });
     }
+}
+
+fn init_game(
+    mut commands: Commands,
+    start_game_info: Res<StartGameInfo>,
+    ants: Query<Entity, With<Ant>>,
+    ant_spawners: Query<Entity, With<AntSpawner>>,
+    buildings: Query<(Entity, &BuildingId)>,
+) {
+    for entity in ants {
+        commands.entity(entity).despawn();
+    }
+
+    for entity in ant_spawners {
+        commands.entity(entity).despawn();
+    }
+
+    for (building_entity, building_id) in &buildings {
+        if let Some(player_ref) = start_game_info.building_assignements.get(building_id) {
+            commands.entity(building_entity).insert(*player_ref);
+        } else {
+            commands.entity(building_entity).remove::<PlayerRef>();
+        }
+
+        commands.entity(building_entity).insert(Inhabitants::new(5));
+    }
+
+    commands.insert_resource(EndGameInfo { winner: None });
 }
