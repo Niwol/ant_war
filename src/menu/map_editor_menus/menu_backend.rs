@@ -63,9 +63,15 @@ fn update_create_map_button_interactibility(
     mut commands: Commands,
     map_name_text: Single<&EditableText, (With<MapNameTextInput>, Changed<EditableText>)>,
     create_map_button: Single<Entity, With<CreateMapButton>>,
+    map_collection: Res<MapCollection>,
 ) {
     let text = map_name_text.editor.raw_text();
-    if text.len() == 0 {
+    if text.len() == 0
+        || map_collection
+            .map_infos()
+            .iter()
+            .any(|map_info| map_info.map_name() == text)
+    {
         commands
             .entity(*create_map_button)
             .insert(InteractionDisabled);
