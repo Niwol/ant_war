@@ -37,7 +37,6 @@ struct BackgroundSprite;
 fn spawn_deselection_sprite(mut commands: Commands) {
     commands
         .spawn_scene(bsn! {
-            InGameEntity
             BackgroundSprite
             Sprite {
                 color: Color::srgba(0.0, 0.5, 0.0, 0.0),
@@ -73,7 +72,6 @@ fn start_selection_rect(drag: On<Pointer<DragStart>>, cursor: Res<Cursor>, mut c
 
     let world_pos = cursor.world_pos();
     if let Some(world_pos) = world_pos {
-        println!("Start selection rect at: {world_pos}");
         commands.trigger(StartSelectionRect {
             start_position: world_pos,
         });

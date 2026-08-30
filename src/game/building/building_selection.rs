@@ -1,4 +1,4 @@
-use bevy::{color::palettes::css::WHITE, prelude::*};
+use bevy::{color::palettes::css::WHITE, platform::collections::HashSet, prelude::*};
 
 use crate::{
     AppState,
@@ -59,12 +59,12 @@ pub enum BuildingSelectionKind {
 
 #[derive(Resource)]
 pub struct SelectedBuildings {
-    pub buildings: Vec<Entity>,
+    pub buildings: HashSet<Entity>,
 }
 
 fn add_selected_buildings_ressource(mut commands: Commands) {
     commands.insert_resource(SelectedBuildings {
-        buildings: Vec::new(),
+        buildings: HashSet::new(),
     });
 }
 
@@ -93,7 +93,7 @@ fn on_select_building(
             selected_buildings.buildings.clear();
 
             commands.entity(select.building).insert(BuildingSelected);
-            selected_buildings.buildings.push(select.building);
+            selected_buildings.buildings.insert(select.building);
         }
 
         BuildingSelectionKind::AddSelection => {
@@ -114,7 +114,7 @@ fn on_select_building(
                 && players.contains(player_ref.0)
             {
                 commands.entity(select.building).insert(BuildingSelected);
-                selected_buildings.buildings.push(select.building);
+                selected_buildings.buildings.insert(select.building);
             }
         }
 
@@ -170,19 +170,18 @@ fn on_deselect_building(
     mut commands: Commands,
     mut selected_buildings: ResMut<SelectedBuildings>,
 ) {
-    if let Some(index) = selected_buildings
-        .buildings
-        .iter()
-        .position(|entity| *entity == deselect.building)
-    {
-        selected_buildings.buildings.swap_remove(index);
+    if selected_buildings.buildings.contains(&deselect.building) {
+        selected_buildings.buildings.remove(&deselect.building);
         commands
             .entity(deselect.building)
             .remove::<BuildingSelected>();
     }
 }
 
-fn on_player_change(mut commands: Commands, buildings: Query<Entity, Changed<PlayerRef>>) {
+fn on_player_change(
+    mut commands: Commands,
+    buildings: Query<Entity, (With<Building>, Changed<PlayerRef>)>,
+) {
     for building in buildings {
         commands.trigger(DeselectBuilding { building });
     }
@@ -226,7 +225,7 @@ fn on_remove_building_selected(
 ) {
     for (entity, child_of) in &selection_uis {
         if child_of.0 == remove.entity {
-            commands.entity(entity).despawn();
+            commands.entity(entity).try_despawn();
         }
     }
 }

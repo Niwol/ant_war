@@ -126,8 +126,6 @@ fn spawn_map(
     }
 
     for (building_id, building_info) in map.building_infos() {
-        let building_info = building_info;
-
         let mut player_ref = None;
         match building_info.building_type {
             BuildingType::House => (),

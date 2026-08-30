@@ -75,8 +75,6 @@ fn update_selection_rect_border(
     selection_rect: Single<&SelectionRect, Changed<SelectionRect>>,
     mut selection_rect_borders: Query<(&mut Transform, &SelectionRectBorder)>,
 ) {
-    println!("Update Selection Rect Border");
-
     for (mut transform, border) in &mut selection_rect_borders {
         let start_pos = selection_rect.start_position;
         let size = selection_rect.size;
