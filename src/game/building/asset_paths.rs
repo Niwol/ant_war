@@ -1,4 +1,4 @@
-use crate::game::{building::BuildingType, team::PlayerColor};
+use crate::game::{building::BuildingType, player::PlayerColor};
 
 pub const PATH_HOUSE_BLUE: &str = "sprites/buildings/house/house_blue.png";
 pub const PATH_HOUSE_RED: &str = "sprites/buildings/house/house_red.png";

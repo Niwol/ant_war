@@ -4,7 +4,7 @@ use crate::{
     cursor::Cursor,
     game::{
         building::{self, BuildingType},
-        team::PlayerColor,
+        player::PlayerColor,
     },
     map_editor::{
         MapEditorEntity, MapEditorState,

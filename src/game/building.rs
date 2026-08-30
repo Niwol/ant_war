@@ -15,7 +15,7 @@ use crate::{
         },
         game_info::GameState,
         input::{self, InputMoveOrder},
-        team::{Player, PlayerColor, PlayerRef},
+        player::{Player, PlayerColor, PlayerRef},
     },
     world_grid::grid_transform::GridTransform,
 };
@@ -236,7 +236,7 @@ fn player_changed(
 
         let player_color = if let Some(player_ref) = player_ref {
             let player = players.get(player_ref.0).unwrap();
-            player.player_color()
+            player.player_color
         } else {
             PlayerColor::Neutral
         };

@@ -5,8 +5,9 @@ use crate::{
     game::{
         bot::Bot,
         building::Building,
-        team::{Player, PlayerRef},
+        player::{Player, PlayerRef},
     },
+    world_grid::grid_transform::GridTransform,
 };
 
 pub struct BuildingSelectionPlugin;
@@ -21,6 +22,7 @@ impl Plugin for BuildingSelectionPlugin {
         app.add_systems(Update, on_player_change);
 
         app.add_observer(on_select_building);
+        app.add_observer(on_select_buildings_in_rect);
         app.add_observer(on_deselect_building);
         app.add_observer(on_deselect_all_buildings);
         app.add_observer(on_add_building_selected);
@@ -35,6 +37,12 @@ pub struct SelectBuilding {
 }
 
 #[derive(Event)]
+pub struct SelectBuildingsInRect {
+    pub rect: Rect,
+    pub selection_kind: BuildingSelectionKind,
+}
+
+#[derive(Event)]
 pub struct DeselectBuilding {
     pub building: Entity,
 }
@@ -42,6 +50,7 @@ pub struct DeselectBuilding {
 #[derive(Event)]
 pub struct DeselectAllBuildings;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum BuildingSelectionKind {
     SingleSelection,
     AddSelection,
@@ -115,6 +124,33 @@ fn on_select_building(
             });
         }
     };
+}
+
+fn on_select_buildings_in_rect(
+    select: On<SelectBuildingsInRect>,
+    mut commands: Commands,
+    buildings: Query<(Entity, &GridTransform)>,
+) {
+    let rect = select.rect;
+
+    let selection_kind = match select.selection_kind {
+        BuildingSelectionKind::SingleSelection => {
+            commands.trigger(DeselectAllBuildings);
+            BuildingSelectionKind::AddSelection
+        }
+        BuildingSelectionKind::AddSelection => BuildingSelectionKind::AddSelection,
+        BuildingSelectionKind::RemoveSelection => BuildingSelectionKind::RemoveSelection,
+    };
+
+    for (entity, grid_transform) in &buildings {
+        let building_rect = grid_transform.rect_in_world();
+        if !building_rect.intersect(rect).is_empty() {
+            commands.trigger(SelectBuilding {
+                building: entity,
+                selection_kind: selection_kind,
+            });
+        }
+    }
 }
 
 fn on_deselect_all_buildings(

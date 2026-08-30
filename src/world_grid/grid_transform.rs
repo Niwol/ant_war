@@ -42,6 +42,16 @@ impl GridTransform {
         }
     }
 
+    pub fn rect_in_world(&self) -> Rect {
+        let size = self.size_world();
+        let origin = self.center_in_world();
+        Rect::from_center_size(origin, size)
+    }
+
+    pub fn size_world(&self) -> Vec2 {
+        self.size.as_vec2() * CELL_SIZE
+    }
+
     pub fn update_from_world(&mut self, world: Vec2) {
         let center = self.local_center();
         let bottom_left = (world - center) + Vec2::splat(CELL_SIZE / 2.0);

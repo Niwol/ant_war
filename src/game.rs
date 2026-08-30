@@ -8,7 +8,7 @@ use crate::{
         building::{BuildingPlugin, BuildingType, SpawnBuilding},
         game_info::{GameInfoPlugin, StartGameInfo},
         input::InputPlugin,
-        team::{Player, PlayerRef, Team},
+        player::{Player, PlayerRef, Team},
     },
     map::Map,
     menu::game_preparation_menu::menu_backend::GamePreparationInfo,
@@ -20,7 +20,7 @@ pub mod bot;
 pub mod building;
 pub mod game_info;
 pub mod input;
-pub mod team;
+pub mod player;
 
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
@@ -103,18 +103,22 @@ fn spawn_map(
     let mut player_refs = HashMap::new();
 
     for player_info in spawn_map.game_preparation_info.player_infos() {
-        let mut player_commands = commands.spawn_scene(bsn! {
-            Player::new(
-                Team::new(player_info.player_id as u32),
-                player_info.player_color,
-            )
-        });
+        let bot = if player_info.bot {
+            Some(Bot::new(Brain::simple()))
+        } else {
+            None
+        };
 
-        if player_info.bot {
-            player_commands.insert(Bot::new(Brain::simple()));
-        }
+        let player_entity = commands
+            .spawn_scene(bsn! {
+                @Player {
+                    team: Team::new(player_info.player_id as u32),
+                    player_color: {player_info.player_color},
 
-        let player_entity = player_commands.id();
+                    @bot
+                }
+            })
+            .id();
 
         start_game_info.players.push(player_entity);
 

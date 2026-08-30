@@ -4,7 +4,7 @@ use crate::{
     AppState,
     game::{
         game_info::GameState,
-        team::{Player, PlayerRef},
+        player::{Player, PlayerRef},
     },
 };
 

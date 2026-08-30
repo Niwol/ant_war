@@ -5,7 +5,7 @@ use crate::{
         ant::{Ant, ant_spawner::AntSpawner},
         building::{BuildingId, inhabitants::Inhabitants},
         game_info::{GameState, StartGameInfo, end_game::EndGameInfo},
-        team::PlayerRef,
+        player::PlayerRef,
     },
     world_grid::WorldGrid,
 };

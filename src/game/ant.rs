@@ -5,7 +5,7 @@ use crate::game::{
     ant::ant_spawner::AntSpawnerPlugin,
     building::{Building, inhabitants::Inhabitants},
     game_info::GameState,
-    team::{Player, PlayerRef},
+    player::{Player, PlayerRef},
 };
 
 pub mod ant_spawner;
@@ -64,7 +64,7 @@ fn spawn_ant(spawn: On<SpawnAnt>, mut commands: Commands, players: Query<&Player
             }
 
             Sprite {
-                color: { player.player_color().color() },
+                color: { player.player_color.color() },
                 custom_size: { Vec2::splat(8.0) }
             }
 

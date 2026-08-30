@@ -11,8 +11,8 @@ use bevy::{
 };
 
 use crate::{
-    game::team::{NB_PLAYER_COLORS, PlayerColor},
-    map::{Map, MapInfo, MapCollection},
+    game::player::{NB_PLAYER_COLORS, PlayerColor},
+    map::{Map, MapCollection, MapInfo},
     menu::{
         MenuState,
         game_preparation_menu::{

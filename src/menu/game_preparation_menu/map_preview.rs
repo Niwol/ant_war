@@ -8,7 +8,7 @@ use bevy::{
 use crate::{
     game::{
         building::{self, BuildingType},
-        team::PlayerColor,
+        player::PlayerColor,
     },
     map::Map,
     menu::{

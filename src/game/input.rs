@@ -2,14 +2,18 @@ use bevy::prelude::*;
 
 use crate::{
     AppState,
+    cursor::Cursor,
     game::{
         InGameEntity,
         building::{
             Building,
-            building_selection::{BuildingSelectionKind, DeselectAllBuildings, SelectBuilding},
+            building_selection::{
+                BuildingSelectionKind, DeselectAllBuildings, SelectBuilding, SelectBuildingsInRect,
+            },
         },
         game_info::GameState,
     },
+    ui::selection_rect::{SelectionRect, StartSelectionRect},
 };
 
 pub struct InputPlugin;
@@ -42,7 +46,10 @@ fn spawn_deselection_sprite(mut commands: Commands) {
             Pickable
             Transform::from_xyz(0.0, 0.0, -1.0)
         })
-        .observe(on_background_clicked);
+        .observe(on_background_clicked)
+        .observe(start_selection_rect)
+        .observe(update_selection_rect)
+        .observe(end_selection_rect);
 }
 
 fn on_background_clicked(
@@ -57,6 +64,55 @@ fn on_background_clicked(
 
         commands.trigger(DeselectAllBuildings);
     }
+}
+
+fn start_selection_rect(drag: On<Pointer<DragStart>>, cursor: Res<Cursor>, mut commands: Commands) {
+    if drag.button != PointerButton::Primary {
+        return;
+    }
+
+    let world_pos = cursor.world_pos();
+    if let Some(world_pos) = world_pos {
+        println!("Start selection rect at: {world_pos}");
+        commands.trigger(StartSelectionRect {
+            start_position: world_pos,
+        });
+    }
+}
+
+fn update_selection_rect(drag: On<Pointer<Drag>>, mut selection_rect: Single<&mut SelectionRect>) {
+    let size = Vec2 {
+        x: drag.distance.x,
+        y: -drag.distance.y,
+    };
+    selection_rect.size = size;
+}
+
+fn end_selection_rect(
+    _: On<Pointer<DragEnd>>,
+    mut commands: Commands,
+    input: Res<ButtonInput<KeyCode>>,
+    selection_rect: Single<(Entity, &SelectionRect)>,
+) {
+    let (entity, selection_rect) = selection_rect.into_inner();
+    let center = selection_rect.start_position + selection_rect.size / 2.0;
+
+    let mut select = SelectBuildingsInRect {
+        rect: Rect::from_center_size(center, selection_rect.size.abs()),
+        selection_kind: BuildingSelectionKind::AddSelection,
+    };
+
+    if input.pressed(KeyCode::ShiftLeft) {
+        select.selection_kind = BuildingSelectionKind::AddSelection;
+    }
+
+    if input.pressed(KeyCode::ControlLeft) {
+        select.selection_kind = BuildingSelectionKind::RemoveSelection;
+    }
+
+    commands.trigger(select);
+
+    commands.entity(entity).despawn();
 }
 
 pub fn on_select(

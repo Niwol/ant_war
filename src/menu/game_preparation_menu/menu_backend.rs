@@ -5,7 +5,7 @@ use bevy::{
 use crate::{
     game::{
         StartGame, building,
-        team::{PLAYER_COLOR_LIST, PlayerColor},
+        player::{PLAYER_COLOR_LIST, PlayerColor},
     },
     map::Map,
     menu::{

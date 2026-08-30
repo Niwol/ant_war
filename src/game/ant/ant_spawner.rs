@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::{InGameEntity, ant::SpawnAnt, game_info::GameState, team::PlayerRef};
+use crate::game::{InGameEntity, ant::SpawnAnt, game_info::GameState, player::PlayerRef};
 
 pub struct AntSpawnerPlugin;
 impl Plugin for AntSpawnerPlugin {

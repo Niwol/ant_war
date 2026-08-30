@@ -39,14 +39,14 @@ fn spawn_game_over_ui(mut commands: Commands, end_game_info: Res<EndGameInfo>) {
                 Text::new(
                     format!(
                         "Player {} {} won",
-                        winner.team().id(),
-                        winner.player_color().color_name()
+                        winner.team.id(),
+                        winner.player_color.color_name()
                     )
                 )
                 TextFont {
                     font_size: px(50.0),
                 }
-                TextColor({winner.player_color().color()})
+                TextColor({winner.player_color.color()})
             ),
 
             (

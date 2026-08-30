@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use crate::{
     game::{
         building::{self, BuildingId, BuildingType},
-        team::PlayerColor,
+        player::PlayerColor,
     },
     map::BuildingInfo,
     map_editor::{

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::InGameEntity;
+use crate::game::{InGameEntity, bot::Bot};
 
 pub const PLAYER_COLOR_BLUE: Color = Color::srgb(0.00, 0.50, 1.00);
 pub const PLAYER_COLOR_RED: Color = Color::srgb(1.00, 0.00, 0.00);
@@ -147,33 +147,31 @@ impl Team {
     }
 }
 
-#[derive(Component, Default, Clone, Copy, PartialEq)]
-#[require(InGameEntity)]
-
-pub struct Player {
-    team: Team,
-    player_color: PlayerColor,
-}
-
-#[derive(Component, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, FromTemplate)]
 pub struct PlayerRef(pub Entity);
 
-impl Default for PlayerRef {
-    fn default() -> Self {
-        Self(Entity::PLACEHOLDER)
-    }
+#[derive(SceneComponent, Default, Clone, Copy, PartialEq)]
+#[require(InGameEntity)]
+#[scene(PlayerProps)]
+pub struct Player {
+    pub team: Team,
+    pub player_color: PlayerColor,
+}
+
+#[derive(Default)]
+pub struct PlayerProps {
+    pub bot: Option<Bot>,
 }
 
 impl Player {
-    pub fn new(team: Team, player_color: PlayerColor) -> Self {
-        Self { team, player_color }
-    }
+    fn scene(props: PlayerProps) -> impl Scene {
+        let bot: Box<dyn Scene> = match props.bot {
+            Some(bot) => Box::new(bsn! {template_value(bot)}),
+            None => Box::new(bsn! {}),
+        };
 
-    pub fn team(&self) -> Team {
-        self.team
-    }
-
-    pub fn player_color(&self) -> PlayerColor {
-        self.player_color
+        bsn! {
+            {bot}
+        }
     }
 }

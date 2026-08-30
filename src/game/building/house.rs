@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::game::{
     building::{Building, BuildingSprites, BuildingType},
-    team::{Player, PlayerColor, PlayerRef},
+    player::{Player, PlayerColor, PlayerRef},
 };
 
 pub fn plugin(app: &mut App) {
@@ -22,7 +22,7 @@ fn on_add_house(
     let color = match player_ref {
         Some(player_ref) => {
             let player = players.get(player_ref.0).unwrap();
-            player.player_color()
+            player.player_color
         }
 
         None => PlayerColor::Neutral,

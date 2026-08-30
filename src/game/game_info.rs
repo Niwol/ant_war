@@ -2,7 +2,7 @@ use bevy::{platform::collections::HashMap, prelude::*};
 
 use crate::{
     AppState,
-    game::{building::BuildingId, team::PlayerRef},
+    game::{building::BuildingId, player::PlayerRef},
 };
 
 pub mod end_game;

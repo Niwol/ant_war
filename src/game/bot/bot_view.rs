@@ -4,7 +4,7 @@ use crate::{
     game::{
         building::{Building, inhabitants::Inhabitants},
         game_info::GameState,
-        team::PlayerRef,
+        player::PlayerRef,
     },
     world_grid::grid_transform::GridTransform,
 };
