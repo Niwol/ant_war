@@ -6,7 +6,7 @@ use crate::{
         InGameEntity,
         building::{
             Building,
-            building_selection::{BuildingSelectionKind, SelectBuilding},
+            building_selection::{BuildingSelectionKind, DeselectAllBuildings, SelectBuilding},
         },
         game_info::GameState,
     },
@@ -15,7 +15,6 @@ use crate::{
 pub struct InputPlugin;
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(SelectedBuilding { building: None });
         app.add_systems(OnEnter(AppState::InGame), spawn_deselection_sprite);
 
         app.add_systems(Update, handle_key_input.run_if(in_state(AppState::InGame)));
@@ -27,20 +26,15 @@ pub struct InputMoveOrder {
     pub target: Entity,
 }
 
-#[derive(Resource)]
-pub struct SelectedBuilding {
-    building: Option<Entity>,
-}
-
 #[derive(Component, Default, Clone, Copy)]
 #[require(InGameEntity)]
-struct DeselectionSprite;
+struct BackgroundSprite;
 
 fn spawn_deselection_sprite(mut commands: Commands) {
     commands
         .spawn_scene(bsn! {
             InGameEntity
-            DeselectionSprite
+            BackgroundSprite
             Sprite {
                 color: Color::srgba(0.0, 0.5, 0.0, 0.0),
                 custom_size: Vec2::new(3000.0, 2000.0)
@@ -48,13 +42,21 @@ fn spawn_deselection_sprite(mut commands: Commands) {
             Pickable
             Transform::from_xyz(0.0, 0.0, -1.0)
         })
-        .observe(
-            |click: On<Pointer<Click>>, mut selected_building: ResMut<SelectedBuilding>| {
-                if click.button == PointerButton::Primary {
-                    selected_building.building = None;
-                }
-            },
-        );
+        .observe(on_background_clicked);
+}
+
+fn on_background_clicked(
+    click: On<Pointer<Click>>,
+    mut commands: Commands,
+    input: Res<ButtonInput<KeyCode>>,
+) {
+    if click.button == PointerButton::Primary {
+        if input.any_pressed([KeyCode::ShiftLeft, KeyCode::ControlLeft]) {
+            return;
+        }
+
+        commands.trigger(DeselectAllBuildings);
+    }
 }
 
 pub fn on_select(
@@ -70,6 +72,10 @@ pub fn on_select(
 
         if input.pressed(KeyCode::ShiftLeft) {
             select_buildign.selection_kind = BuildingSelectionKind::AddSelection;
+        }
+
+        if input.pressed(KeyCode::ControlLeft) {
+            select_buildign.selection_kind = BuildingSelectionKind::RemoveSelection;
         }
 
         commands.trigger(select_buildign);

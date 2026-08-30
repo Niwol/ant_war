@@ -22,6 +22,7 @@ impl Plugin for BuildingSelectionPlugin {
 
         app.add_observer(on_select_building);
         app.add_observer(on_deselect_building);
+        app.add_observer(on_deselect_all_buildings);
         app.add_observer(on_add_building_selected);
         app.add_observer(on_remove_building_selected);
     }
@@ -38,9 +39,13 @@ pub struct DeselectBuilding {
     pub building: Entity,
 }
 
+#[derive(Event)]
+pub struct DeselectAllBuildings;
+
 pub enum BuildingSelectionKind {
     SingleSelection,
     AddSelection,
+    RemoveSelection,
 }
 
 #[derive(Resource)]
@@ -81,6 +86,7 @@ fn on_select_building(
             commands.entity(select.building).insert(BuildingSelected);
             selected_buildings.buildings.push(select.building);
         }
+
         BuildingSelectionKind::AddSelection => {
             if !selected_buildings.buildings.iter().all(|building| {
                 let player_ref = buildings.get(*building).unwrap();
@@ -102,7 +108,25 @@ fn on_select_building(
                 selected_buildings.buildings.push(select.building);
             }
         }
+
+        BuildingSelectionKind::RemoveSelection => {
+            commands.trigger(DeselectBuilding {
+                building: select.building,
+            });
+        }
     };
+}
+
+fn on_deselect_all_buildings(
+    _: On<DeselectAllBuildings>,
+    mut commands: Commands,
+    selected_buildings: Res<SelectedBuildings>,
+) {
+    for building in &selected_buildings.buildings {
+        commands.trigger(DeselectBuilding {
+            building: *building,
+        });
+    }
 }
 
 fn on_deselect_building(
