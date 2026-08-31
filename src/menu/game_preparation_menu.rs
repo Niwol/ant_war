@@ -258,6 +258,7 @@ fn player_informations(game_preparation_info: GamePreparationInfo) -> impl Scene
         BorderColor::all(WHITE)
 
         Children [
+            label("Players (color + Player/Bot):"),
             {player_list}
         ]
     }
@@ -346,6 +347,7 @@ fn building_assignements(game_preparation_info: GamePreparationInfo) -> impl Sce
         BorderColor::all(WHITE)
 
         Children [
+            label("Main building assignements:"),
             {building_assignement_elements(game_preparation_info)}
         ]
     }

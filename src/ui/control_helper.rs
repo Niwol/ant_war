@@ -7,7 +7,7 @@ use bevy::{
 use crate::AppState;
 
 const HELPER_TEXT: &str = "Controls:
-LBM / RMB: Left / Right Mouse Button
+LMB / RMB: Left / Right Mouse Button
 LMB: Select building
 Left Shift + LMB: Select multiple buildings
 Hold LMB + Drag: Select multiple buildings
