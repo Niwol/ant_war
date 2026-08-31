@@ -7,7 +7,7 @@ use crate::{
         StartGame, building,
         player::{PLAYER_COLOR_LIST, PlayerColor},
     },
-    map::Map,
+    map::{Map, MapAccess, MapCollection},
     menu::{
         MenuState,
         game_preparation_menu::{
@@ -95,12 +95,20 @@ impl GamePreparationInfo {
 fn on_map_selected(
     selected: On<MapSelected>,
     mut commands: Commands,
+    map_collection: Res<MapCollection>,
     asset_server: Res<AssetServer>,
     mut next_state: ResMut<NextState<MapLoadingState>>,
 ) {
+    let map_info = map_collection.map_info(selected.map_name.clone()).unwrap();
+
+    let handle = match map_info._map_access() {
+        MapAccess::Handle(handle) => handle.clone(),
+        MapAccess::AssetPath(path) => asset_server.load(path),
+    };
+
     let selected_map = SelectedMap {
-        _path: selected.path.clone(),
-        handle: asset_server.load(&selected.path),
+        _path: map_info.path(),
+        handle,
     };
 
     commands.insert_resource(selected_map);

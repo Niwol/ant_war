@@ -51,7 +51,7 @@ impl Plugin for GamePreparationMenuPlugin {
 
 #[derive(Event)]
 struct MapSelected {
-    path: String,
+    map_name: String,
 }
 
 #[derive(Event)]
@@ -132,7 +132,7 @@ fn list_row_element(map_info: MapInfo, selected: bool) -> impl Scene {
     };
 
     let name = map_info.map_name();
-    let map_path = map_info.path();
+    let name_to_move = name.clone();
 
     bsn! {
         {selected}
@@ -140,7 +140,7 @@ fn list_row_element(map_info: MapInfo, selected: bool) -> impl Scene {
         Children [Text::new(&name) ThemedText]
         on(move |_add: On<Add, Selected>, mut commands: Commands| {
             commands.trigger(MapSelected {
-                path: map_path.clone(),
+                map_name: name_to_move.clone(),
             });
         })
     }
