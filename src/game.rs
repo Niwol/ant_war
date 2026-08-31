@@ -74,7 +74,9 @@ fn start_game(
 ) {
     let map_size = start_game.map.size_world();
 
-    window.resolution.set(map_size.x + 50.0, map_size.y + 50.0);
+    window
+        .resolution
+        .set(map_size.x + 700.0, map_size.y + 300.0);
 
     commands.trigger(SpawnMap {
         map: start_game.map.clone(),

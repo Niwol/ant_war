@@ -1,4 +1,5 @@
 use bevy::{
+    feathers::controls::{NumberInputValue, UpdateNumberInput},
     prelude::*,
     ui_widgets::{Activate, ValueChange},
 };
@@ -25,6 +26,9 @@ pub mod background_sprite;
 pub mod editor_building;
 pub mod invalid_location;
 pub mod preview_building;
+
+const MAX_MAP_SIZE: UVec2 = UVec2 { x: 60, y: 60 };
+const MIN_MAP_SIZE: UVec2 = UVec2 { x: 10, y: 10 };
 
 pub struct EditorPlugin;
 impl Plugin for EditorPlugin {
@@ -197,12 +201,17 @@ pub fn on_update_map_width(
     world_grid: Res<WorldGrid>,
 ) {
     if update.is_final {
-        if update.value <= 0 {
-            return;
+        let value = i32::clamp(update.value, MIN_MAP_SIZE.x as i32, MAX_MAP_SIZE.x as i32);
+
+        if value != update.value {
+            commands.trigger(UpdateNumberInput {
+                entity: update.source,
+                value: NumberInputValue::I32(value as i32),
+            });
         }
 
         let mut grid_size = world_grid.grid_size();
-        grid_size.x = update.value as u32;
+        grid_size.x = value as u32;
 
         commands.trigger(ResizeMap {
             new_size: grid_size,
@@ -216,12 +225,17 @@ pub fn on_update_map_height(
     world_grid: Res<WorldGrid>,
 ) {
     if update.is_final {
-        if update.value <= 0 {
-            return;
+        let value = i32::clamp(update.value, MIN_MAP_SIZE.y as i32, MAX_MAP_SIZE.y as i32);
+
+        if value != update.value {
+            commands.trigger(UpdateNumberInput {
+                entity: update.source,
+                value: NumberInputValue::I32(value as i32),
+            });
         }
 
         let mut grid_size = world_grid.grid_size();
-        grid_size.y = update.value as u32;
+        grid_size.y = value as u32;
 
         commands.trigger(ResizeMap {
             new_size: grid_size,
