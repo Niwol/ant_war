@@ -111,7 +111,7 @@ fn enter_building(
         if *building_player_ref == *ant_player_ref {
             inhabitants.add(1);
         } else {
-            if inhabitants.total() == 0 {
+            if inhabitants.current() == 0 {
                 *building_player_ref = *ant_player_ref;
                 inhabitants.add(1);
             } else {
@@ -119,7 +119,7 @@ fn enter_building(
             }
         }
     } else {
-        if inhabitants.total() == 0 {
+        if inhabitants.current() == 0 {
             commands
                 .entity(enter_event.building)
                 .insert(*ant_player_ref);

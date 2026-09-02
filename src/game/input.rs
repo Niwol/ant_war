@@ -140,8 +140,13 @@ pub fn on_order(
     click: On<Pointer<Click>>,
     buildings: Query<Entity, With<Building>>,
     mut commands: Commands,
+    current_state: Res<State<GameState>>,
 ) {
     if click.button != PointerButton::Secondary {
+        return;
+    }
+
+    if **current_state != (GameState::Playing { paused: false }) {
         return;
     }
 

@@ -4,7 +4,8 @@ use bevy::{
 
 use crate::{
     game::{
-        StartGame, building,
+        StartGame,
+        building::{self, BuildingType},
         player::{PLAYER_COLOR_LIST, PlayerColor},
     },
     map::{Map, MapAccess, MapCollection},
@@ -146,8 +147,9 @@ fn loading_map(
             .building_infos_as_vec()
             .into_iter()
             .filter_map(|building_info| match building_info.building_type {
-                crate::game::building::BuildingType::House => None,
-                crate::game::building::BuildingType::MainBuilding { index } => Some((index, 0)),
+                BuildingType::House => None,
+                BuildingType::MainBuilding { index } => Some((index, 0)),
+                BuildingType::Tower => None,
             })
             .collect::<HashMap<_, _>>();
 

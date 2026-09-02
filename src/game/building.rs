@@ -9,11 +9,11 @@ use crate::{
         building::{
             asset_paths::*,
             building_selection::{BuildingSelectionPlugin, SelectedBuildings},
-            house::HouseMarker,
+            house::House,
             inhabitants::Inhabitants,
             main_building::MainBuilding,
+            tower::Tower,
         },
-        game_info::GameState,
         input::{self, InputMoveOrder},
         player::{Player, PlayerColor, PlayerRef},
     },
@@ -25,6 +25,7 @@ pub mod building_selection;
 pub mod house;
 pub mod inhabitants;
 mod main_building;
+pub mod tower;
 
 pub struct BuildingPlugin;
 impl Plugin for BuildingPlugin {
@@ -32,16 +33,13 @@ impl Plugin for BuildingPlugin {
         app.add_plugins((
             house::plugin,
             main_building::plugin,
+            tower::plugin,
             inhabitants::plugin,
             BuildingSelectionPlugin,
         ));
 
         app.add_systems(Startup, load_building_sprites);
 
-        app.add_systems(
-            Update,
-            building_grow.run_if(in_state(GameState::Playing { paused: false })),
-        );
         app.add_systems(Update, player_changed);
 
         app.add_observer(spawn_building);
@@ -53,6 +51,7 @@ impl Plugin for BuildingPlugin {
 pub struct BuildingSprites {
     pub house_sprites: HashMap<PlayerColor, Handle<Image>>,
     pub main_building_sprites: HashMap<PlayerColor, Handle<Image>>,
+    pub tower_sprites: HashMap<PlayerColor, Handle<Image>>,
 }
 
 impl BuildingSprites {
@@ -62,6 +61,7 @@ impl BuildingSprites {
             BuildingType::MainBuilding { index: _ } => {
                 self.main_building_sprites[&player_color].clone()
             }
+            BuildingType::Tower => self.tower_sprites[&player_color].clone(),
         }
     }
 }
@@ -94,6 +94,18 @@ fn load_building_sprites(mut commands: Commands, assets: Res<AssetServer>) {
                 assets.load(PATH_MAIN_BUILDING_NEUTRAL),
             ),
         ]),
+
+        tower_sprites: HashMap::from([
+            (PlayerColor::Blue, assets.load(PATH_TOWER_BLUE)),
+            (PlayerColor::Red, assets.load(PATH_TOWER_RED)),
+            (PlayerColor::Green, assets.load(PATH_TOWER_GREEN)),
+            (PlayerColor::Orange, assets.load(PATH_TOWER_ORANGE)),
+            (PlayerColor::Purple, assets.load(PATH_TOWER_PURPLE)),
+            (PlayerColor::Yellow, assets.load(PATH_TOWER_YELLOW)),
+            (PlayerColor::Aqua, assets.load(PATH_TOWER_AQUA)),
+            (PlayerColor::Pink, assets.load(PATH_TOWER_PINK)),
+            (PlayerColor::Neutral, assets.load(PATH_TOWER_NEUTRAL)),
+        ]),
     };
 
     commands.insert_resource(building_sprites);
@@ -105,17 +117,29 @@ pub struct MoveOrder {
     pub target: Entity,
 }
 
-#[derive(Component, Default, Clone)]
+#[derive(SceneComponent, Default, Clone)]
 #[require(Pickable, Sprite, InGameEntity)]
+#[scene(BuildingProps)]
 pub struct Building {
-    max_inhabitants: i32,
-    growable: bool,
-    grow_timer: Timer,
+    building_type: BuildingType,
+}
+
+#[derive(Default, Clone, Copy)]
+pub struct BuildingProps {
+    building_id: BuildingId,
+    grid_transform: GridTransform,
 }
 
 impl Building {
-    pub fn max_inhabitants(&self) -> i32 {
-        self.max_inhabitants
+    fn scene(props: BuildingProps) -> impl Scene {
+        bsn! {
+            template_value(props.building_id)
+            template_value(props.grid_transform)
+
+            on(input::on_select)
+            on(input::on_order)
+            on(on_move_order)
+        }
     }
 }
 
@@ -139,6 +163,7 @@ pub enum BuildingType {
     MainBuilding {
         index: usize,
     },
+    Tower,
 }
 
 impl BuildingType {
@@ -146,13 +171,14 @@ impl BuildingType {
         match self {
             BuildingType::House => UVec2::splat(3),
             BuildingType::MainBuilding { index: _ } => UVec2::splat(4),
+            BuildingType::Tower => UVec2::splat(2),
         }
     }
 }
 
 #[derive(QueryData)]
 pub struct BuildingTypeQueryData {
-    pub house: Option<&'static HouseMarker>,
+    pub house: Option<&'static House>,
     pub main_building: Option<&'static MainBuilding>,
 }
 
@@ -164,24 +190,35 @@ pub struct SpawnBuilding {
 }
 
 fn spawn_building(spawn: On<SpawnBuilding>, mut commands: Commands) {
-    let mut building = commands.spawn_scene(bsn! {
-        Building
-        template_value(spawn.building_id)
-
-        Inhabitants::new(0)
-
-        template_value(spawn.grid_transform)
-    });
-
-    match spawn.building_type {
-        BuildingType::House => building.insert(HouseMarker),
-        BuildingType::MainBuilding { index: _ } => building.insert(MainBuilding),
+    let building_props = BuildingProps {
+        building_id: spawn.building_id,
+        grid_transform: spawn.grid_transform,
     };
 
-    building
-        .observe(input::on_select)
-        .observe(input::on_order.run_if(in_state(GameState::Playing { paused: false })))
-        .observe(on_move_order);
+    match spawn.building_type {
+        BuildingType::House => {
+            commands.spawn_scene(bsn! {
+                @House {
+                    @building_props
+                }
+            });
+        }
+        BuildingType::MainBuilding { index } => {
+            commands.spawn_scene(bsn! {
+                @MainBuilding {
+                    @building_props,
+                    @main_building_index: index,
+                }
+            });
+        }
+        BuildingType::Tower => {
+            commands.spawn_scene(bsn! {
+                @Tower {
+                    @building_props
+                }
+            });
+        }
+    }
 }
 
 fn on_move_order(
@@ -191,7 +228,7 @@ fn on_move_order(
 ) {
     let (mut inhabitants, player_ref, transform) = buildings.get_mut(order.entity).unwrap();
 
-    let to_move = inhabitants.total() / 2 + inhabitants.total() % 2;
+    let to_move = inhabitants.current() / 2 + inhabitants.current() % 2;
     inhabitants.take(to_move);
 
     commands.trigger(SapwnAntSpawner {
@@ -202,37 +239,14 @@ fn on_move_order(
     });
 }
 
-fn building_grow(
-    time: Res<Time>,
-    mut player_buildings: Query<(&mut Building, &mut Inhabitants), With<PlayerRef>>,
-) {
-    for (mut building, mut inhabitants) in &mut player_buildings {
-        building.grow_timer.tick(time.delta());
-
-        if building.grow_timer.just_finished() {
-            if building.max_inhabitants > inhabitants.total() && building.growable {
-                inhabitants.add(1);
-            } else if building.max_inhabitants < inhabitants.total() {
-                inhabitants.take(1);
-            }
-        }
-    }
-}
-
 fn player_changed(
     players: Query<&Player>,
-    mut sprites: Query<(&mut Sprite, Option<&PlayerRef>, BuildingTypeQueryData), With<Building>>,
+    mut sprites: Query<(&mut Sprite, Option<&PlayerRef>, &Building)>,
 
     building_sprites: Res<BuildingSprites>,
 ) {
-    for (mut sprite, player_ref, building_type) in &mut sprites {
-        let building_type = if building_type.house.is_some() {
-            BuildingType::House
-        } else if building_type.main_building.is_some() {
-            BuildingType::MainBuilding { index: 0 }
-        } else {
-            unreachable!("No building type");
-        };
+    for (mut sprite, player_ref, building) in &mut sprites {
+        let building_type = building.building_type;
 
         let player_color = if let Some(player_ref) = player_ref {
             let player = players.get(player_ref.0).unwrap();

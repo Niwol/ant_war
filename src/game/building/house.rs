@@ -1,37 +1,38 @@
 use bevy::prelude::*;
 
 use crate::game::{
-    building::{Building, BuildingSprites, BuildingType},
-    player::{Player, PlayerColor, PlayerRef},
+    building::{Building, BuildingProps, BuildingType, inhabitants::Inhabitants},
+    player::PlayerColor,
 };
 
-pub fn plugin(app: &mut App) {
-    app.add_observer(on_add_house);
+pub fn plugin(_app: &mut App) {}
+
+#[derive(SceneComponent, Default, Clone)]
+#[scene(HouseProps)]
+pub struct House;
+
+#[derive(Default)]
+pub struct HouseProps {
+    pub building_props: BuildingProps,
 }
 
-#[derive(Component, Default, Clone)]
-pub struct HouseMarker;
+impl House {
+    fn scene(props: HouseProps) -> impl Scene {
+        let building_props = props.building_props;
+        let image_path = super::asset_paths::get_path(BuildingType::House, PlayerColor::Neutral);
 
-fn on_add_house(
-    add: On<Add, HouseMarker>,
-    mut buildings: Query<(&mut Building, &mut Sprite, Option<&PlayerRef>)>,
-    players: Query<&Player>,
-    building_sprites: Res<BuildingSprites>,
-) {
-    let (mut building, mut sprite, player_ref) = buildings.get_mut(add.entity).unwrap();
-    let color = match player_ref {
-        Some(player_ref) => {
-            let player = players.get(player_ref.0).unwrap();
-            player.player_color
+        bsn! {
+            @Building {
+                building_type: BuildingType::House,
+                @building_id: {building_props.building_id},
+                @grid_transform: {building_props.grid_transform}
+            }
+
+            Inhabitants::new(5, 20, Some(Timer::from_seconds(2.0, TimerMode::Repeating)))
+
+            Sprite {
+                image: image_path
+            }
         }
-
-        None => PlayerColor::Neutral,
-    };
-
-    let image_handle = building_sprites.get(BuildingType::House, color);
-    sprite.image = image_handle;
-
-    building.max_inhabitants = 20;
-    building.growable = true;
-    building.grow_timer = Timer::from_seconds(0.5, TimerMode::Repeating);
+    }
 }

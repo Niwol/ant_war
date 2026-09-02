@@ -82,6 +82,7 @@ fn spawn_preview_scene(
             BuildingType::MainBuilding { index } => {
                 building.insert(MainBuildingIndex(index));
             }
+            BuildingType::Tower => (),
         }
     }
 

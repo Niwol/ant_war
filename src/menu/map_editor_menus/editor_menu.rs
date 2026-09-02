@@ -97,6 +97,7 @@ fn left_panel(map_name: impl Into<String>) -> impl Scene {
             map_size_text_input(),
             add_house_button(),
             add_main_building_button(),
+            add_tower_button(),
             save_button(),
             main_menu_button()
         ]
@@ -185,6 +186,19 @@ fn add_main_building_button() -> impl Scene {
     }
 }
 
+fn add_tower_button() -> impl Scene {
+    bsn! {
+        @FeathersButton {
+            @caption: bsn! {
+                Text::new("Add Tower")
+                ThemedText
+            }
+        }
+
+        on(add_tower_button_clicked)
+    }
+}
+
 fn save_button() -> impl Scene {
     bsn! {
         @FeathersButton {
@@ -213,6 +227,10 @@ fn main_menu_button() -> impl Scene {
 
 fn add_house_button_clicked(_: On<Activate>, mut commands: Commands) {
     commands.trigger(AddBuilding(BuildingType::House));
+}
+
+fn add_tower_button_clicked(_: On<Activate>, mut commands: Commands) {
+    commands.trigger(AddBuilding(BuildingType::Tower));
 }
 
 fn save_button_clicked(_: On<Activate>, mut commands: Commands) {

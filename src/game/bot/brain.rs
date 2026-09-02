@@ -54,7 +54,8 @@ impl Brain {
     }
 
     fn pop_score(&self, pop: i32, max_pop: i32) -> f32 {
-        let pop_diff = (max_pop - pop) as f32 + 0.01;
+        let pop_diff = (max_pop - pop) as f32;
+        let pop_diff = pop_diff.clamp(0.001, max_pop as f32);
 
         let fill_ratio = 10.0 / pop_diff;
 

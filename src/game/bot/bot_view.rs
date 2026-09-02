@@ -1,11 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    game::{
-        building::{Building, inhabitants::Inhabitants},
-        game_info::GameState,
-        player::PlayerRef,
-    },
+    game::{building::inhabitants::Inhabitants, game_info::GameState, player::PlayerRef},
     world_grid::grid_transform::GridTransform,
 };
 
@@ -34,24 +30,18 @@ impl BotView {
 
 fn fill_bot_view(
     mut bots: Query<(Entity, &mut BotView)>,
-    buildigns: Query<(
-        Entity,
-        Option<&PlayerRef>,
-        &Inhabitants,
-        &Building,
-        &GridTransform,
-    )>,
+    buildigns: Query<(Entity, Option<&PlayerRef>, &Inhabitants, &GridTransform)>,
 ) {
     for (player_entity, mut bot_view) in &mut bots {
         bot_view.clear();
 
         for building in &buildigns {
-            let (building_entity, player_ref, inhabitants, building, grid_transform) = building;
+            let (building_entity, player_ref, inhabitants, grid_transform) = building;
 
             let building_view = BuildingView {
                 entity: building_entity,
-                inhabitants: inhabitants.total(),
-                max_inhabitants: building.max_inhabitants(),
+                inhabitants: inhabitants.current(),
+                max_inhabitants: inhabitants.max_inhabitants(),
                 world_pos: grid_transform.center_in_world(),
             };
 

@@ -77,7 +77,7 @@ fn init_game(
     start_game_info: Res<StartGameInfo>,
     ants: Query<Entity, With<Ant>>,
     ant_spawners: Query<Entity, With<AntSpawner>>,
-    buildings: Query<(Entity, &BuildingId)>,
+    mut buildings: Query<(Entity, &BuildingId, &mut Inhabitants)>,
 ) {
     for entity in ants {
         commands.entity(entity).despawn();
@@ -87,14 +87,14 @@ fn init_game(
         commands.entity(entity).despawn();
     }
 
-    for (building_entity, building_id) in &buildings {
+    for (building_entity, building_id, mut inhabitants) in &mut buildings {
         if let Some(player_ref) = start_game_info.building_assignements.get(building_id) {
             commands.entity(building_entity).insert(*player_ref);
         } else {
             commands.entity(building_entity).remove::<PlayerRef>();
         }
 
-        commands.entity(building_entity).insert(Inhabitants::new(5));
+        inhabitants.set(5);
     }
 
     commands.insert_resource(EndGameInfo { winner: None });

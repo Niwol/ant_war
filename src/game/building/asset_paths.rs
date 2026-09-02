@@ -25,6 +25,16 @@ pub const PATH_MAIN_BUILDING_PINK: &str = "sprites/buildings/main_building/main_
 pub const PATH_MAIN_BUILDING_NEUTRAL: &str =
     "sprites/buildings/main_building/main_building_neutral.png";
 
+pub const PATH_TOWER_BLUE: &str = "sprites/buildings/tower/tower_blue.png";
+pub const PATH_TOWER_RED: &str = "sprites/buildings/tower/tower_red.png";
+pub const PATH_TOWER_GREEN: &str = "sprites/buildings/tower/tower_green.png";
+pub const PATH_TOWER_ORANGE: &str = "sprites/buildings/tower/tower_orange.png";
+pub const PATH_TOWER_PURPLE: &str = "sprites/buildings/tower/tower_purple.png";
+pub const PATH_TOWER_YELLOW: &str = "sprites/buildings/tower/tower_yellow.png";
+pub const PATH_TOWER_AQUA: &str = "sprites/buildings/tower/tower_aqua.png";
+pub const PATH_TOWER_PINK: &str = "sprites/buildings/tower/tower_pink.png";
+pub const PATH_TOWER_NEUTRAL: &str = "sprites/buildings/tower/tower_neutral.png";
+
 pub fn get_path(building_type: BuildingType, player_color: PlayerColor) -> &'static str {
     match building_type {
         BuildingType::House => match player_color {
@@ -49,6 +59,18 @@ pub fn get_path(building_type: BuildingType, player_color: PlayerColor) -> &'sta
             PlayerColor::Aqua => PATH_MAIN_BUILDING_AQUA,
             PlayerColor::Pink => PATH_MAIN_BUILDING_PINK,
             PlayerColor::Neutral => PATH_MAIN_BUILDING_NEUTRAL,
+        },
+
+        BuildingType::Tower => match player_color {
+            PlayerColor::Blue => PATH_TOWER_BLUE,
+            PlayerColor::Red => PATH_TOWER_RED,
+            PlayerColor::Green => PATH_TOWER_GREEN,
+            PlayerColor::Orange => PATH_TOWER_ORANGE,
+            PlayerColor::Purple => PATH_TOWER_PURPLE,
+            PlayerColor::Yellow => PATH_TOWER_YELLOW,
+            PlayerColor::Aqua => PATH_TOWER_AQUA,
+            PlayerColor::Pink => PATH_TOWER_PINK,
+            PlayerColor::Neutral => PATH_TOWER_NEUTRAL,
         },
     }
 }

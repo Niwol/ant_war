@@ -8,33 +8,27 @@ use crate::game::{
 pub fn plugin(_app: &mut App) {}
 
 #[derive(SceneComponent, Default, Clone)]
-#[scene(MainBuildingProps)]
-pub struct MainBuilding;
+#[scene(TowerProps)]
+pub struct Tower;
 
 #[derive(Default)]
-pub struct MainBuildingProps {
+pub struct TowerProps {
     pub building_props: BuildingProps,
-    pub main_building_index: usize,
 }
 
-impl MainBuilding {
-    fn scene(props: MainBuildingProps) -> impl Scene {
+impl Tower {
+    fn scene(props: TowerProps) -> impl Scene {
         let building_props = props.building_props;
-        let image_path = super::asset_paths::get_path(
-            BuildingType::MainBuilding { index: 0 },
-            PlayerColor::Neutral,
-        );
+        let image_path = super::asset_paths::get_path(BuildingType::Tower, PlayerColor::Neutral);
 
         bsn! {
             @Building {
-                building_type: BuildingType::MainBuilding {
-                    index: {props.main_building_index}
-                }
+                building_type: BuildingType::Tower,
                 @building_id: {building_props.building_id},
                 @grid_transform: {building_props.grid_transform}
             }
 
-            Inhabitants::new(5, 40, Some(Timer::from_seconds(1.0, TimerMode::Repeating)))
+            Inhabitants::new(5, 30, None)
 
             Sprite {
                 image: image_path

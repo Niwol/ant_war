@@ -134,6 +134,7 @@ impl Map {
                             return true;
                         }
                     }
+                    BuildingType::Tower => (),
                 }
 
                 false

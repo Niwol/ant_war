@@ -1,0 +1,52 @@
+(
+    map_name: "Map 3",
+    map_size: (30, 30),
+    max_players: 2,
+    building_infos: {(5): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((14, 7)),
+        ),
+    ), (6): (
+        building_type: Tower,
+        grid_transform: (
+            size: (2, 2),
+            bottom_left_coord: ((14, 15)),
+        ),
+    ), (3): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((19, 14)),
+        ),
+    ), (4): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((13, 21)),
+        ),
+    ), (0): (
+        building_type: MainBuilding(
+            index: 1,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((2, 24)),
+        ),
+    ), (2): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((7, 14)),
+        ),
+    ), (1): (
+        building_type: MainBuilding(
+            index: 2,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((24, 2)),
+        ),
+    )},
+)
