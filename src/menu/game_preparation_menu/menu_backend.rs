@@ -5,7 +5,7 @@ use bevy::{
 use crate::{
     game::{
         StartGame,
-        building::{self, BuildingType},
+        building::{self, building_type::BuildingType},
         player::{PLAYER_COLOR_LIST, PlayerColor},
     },
     map::{Map, MapAccess, MapCollection},
@@ -383,7 +383,7 @@ fn update_preview_building_color_player_color_change(
 
         if color_change.player_id == player_id {
             sprite.image = assets.load(building::asset_paths::get_path(
-                building::BuildingType::MainBuilding { index: 0 },
+                BuildingType::MainBuilding { index: 0 },
                 color_change.new_color,
             ));
         }
@@ -407,7 +407,7 @@ fn update_preview_building_color_assignement_change(
     for (mut sprite, main_building_index) in &mut sprites {
         if main_building_index.0 == assignement_change.building_id {
             sprite.image = asset_server.load(building::asset_paths::get_path(
-                building::BuildingType::MainBuilding { index: 0 },
+                BuildingType::MainBuilding { index: 0 },
                 player_color,
             ));
         }

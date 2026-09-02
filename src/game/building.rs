@@ -9,6 +9,7 @@ use crate::{
         building::{
             asset_paths::*,
             building_selection::{BuildingSelectionPlugin, SelectedBuildings},
+            building_type::BuildingType,
             house::House,
             inhabitants::Inhabitants,
             main_building::MainBuilding,
@@ -22,6 +23,7 @@ use crate::{
 
 pub mod asset_paths;
 pub mod building_selection;
+pub mod building_type;
 pub mod house;
 pub mod inhabitants;
 mod main_building;
@@ -153,26 +155,6 @@ impl BuildingId {
 
     pub fn id(&self) -> usize {
         self.0
-    }
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum BuildingType {
-    #[default]
-    House,
-    MainBuilding {
-        index: usize,
-    },
-    Tower,
-}
-
-impl BuildingType {
-    pub fn grid_size(&self) -> UVec2 {
-        match self {
-            BuildingType::House => UVec2::splat(3),
-            BuildingType::MainBuilding { index: _ } => UVec2::splat(4),
-            BuildingType::Tower => UVec2::splat(2),
-        }
     }
 }
 

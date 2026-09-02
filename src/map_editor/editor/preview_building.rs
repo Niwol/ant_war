@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::{
     cursor::Cursor,
     game::{
-        building::{self, BuildingType},
+        building::{self, building_type::BuildingType},
         player::PlayerColor,
     },
     map_editor::{

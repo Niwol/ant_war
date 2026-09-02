@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::game::{
-    building::{Building, BuildingProps, BuildingType, inhabitants::Inhabitants},
+    building::{Building, BuildingProps, building_type::BuildingType, inhabitants::Inhabitants},
     player::PlayerColor,
 };
 

@@ -14,7 +14,7 @@ use bevy::{
 use crate::{
     AppState,
     cursor::Cursor,
-    game::building::BuildingType,
+    game::building::building_type::BuildingType,
     map_editor::{
         MapEditorState,
         editor::{self, AddBuilding, CurrentMap, SaveMap, on_add_main_building_clicked},
