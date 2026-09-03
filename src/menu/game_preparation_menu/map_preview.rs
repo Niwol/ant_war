@@ -146,16 +146,14 @@ fn create_map_preview_image(mut commands: Commands, mut images: ResMut<Assets<Im
 
 fn remove_map_preview_elements(
     mut commands: Commands,
-    mut images: ResMut<Assets<Image>>,
-    map_preview_image: Res<MapPreviewImage>,
     map_preview_camera: Single<Entity, With<PreviewSceneCamera>>,
     preview_elements: Query<Entity, With<PreviewSceneElement>>,
 ) {
-    images.remove(&map_preview_image.handle);
-
     commands.entity(*map_preview_camera).despawn();
 
     for entity in &preview_elements {
         commands.entity(entity).despawn();
     }
+
+    commands.remove_resource::<MapPreviewImage>();
 }

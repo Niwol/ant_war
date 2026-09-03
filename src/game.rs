@@ -9,6 +9,7 @@ use crate::{
         game_info::{GameInfoPlugin, StartGameInfo},
         input::InputPlugin,
         player::{Player, PlayerRef, Team},
+        projectiles::ProjectilePlugin,
     },
     map::Map,
     menu::game_preparation_menu::menu_backend::GamePreparationInfo,
@@ -21,12 +22,14 @@ pub mod building;
 pub mod game_info;
 pub mod input;
 pub mod player;
+pub mod projectiles;
 
 pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             GameInfoPlugin,
+            ProjectilePlugin,
             AntPlugin,
             BotPlugin,
             BuildingPlugin,
