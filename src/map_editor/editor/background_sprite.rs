@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
+    game::building::building_type::BuildingType,
     map::BuildingInfo,
     map_editor::{
         MapEditorEntity,
@@ -10,7 +11,7 @@ use crate::{
             preview_building::PreviewBuilding,
         },
     },
-    world_grid::grid_transform::GridTransform,
+    world_grid::{WorldGrid, grid_transform::GridTransform},
 };
 
 #[derive(SceneComponent, Default, Clone)]
@@ -36,6 +37,7 @@ impl BackgroundSprite {
             Transform::from_xyz(props.pos.x, props.pos.y, -1.0)
             Pickable
             on(on_background_left_click)
+            on(on_background_right_click)
             on(show_preview_building)
             on(hide_preview_building)
 
@@ -45,10 +47,12 @@ impl BackgroundSprite {
 
 fn on_background_left_click(
     click: On<Pointer<Click>>,
+    input: Res<ButtonInput<KeyCode>>,
+    world_grid: Res<WorldGrid>,
     mut commands: Commands,
     mut current_map: ResMut<CurrentMap>,
     mut editor_state: ResMut<EditorState>,
-    preview_building: Query<(&PreviewBuilding, &GridTransform)>,
+    mut preview_building: Query<(&mut PreviewBuilding, &GridTransform)>,
 ) {
     if click.button != PointerButton::Primary {
         return;
@@ -59,22 +63,56 @@ fn on_background_left_click(
         editor_state.selected_building = None;
     }
 
-    if let Some(entity) = editor_state.add_building_preveiw {
-        let (preview_building, grid_transform) = preview_building.get(entity).unwrap();
+    if let Some(preview_building_entity) = editor_state.add_building_preveiw {
+        let (mut preview_building, grid_transform) =
+            preview_building.get_mut(preview_building_entity).unwrap();
 
         let building_info = BuildingInfo {
             building_type: preview_building.building_type,
             grid_transform: *grid_transform,
         };
 
-        let building_id = current_map.map.add_building(building_info);
+        if world_grid.all_cells_empty(&building_info.grid_transform.get_coords()) {
+            let building_id = current_map.map.add_building(building_info);
 
-        commands.trigger(SpawnEditorBuilding {
-            building_id,
-            building_info,
-        });
+            commands.trigger(SpawnEditorBuilding {
+                building_id,
+                building_info,
+            });
 
-        commands.entity(entity).despawn();
+            match preview_building.building_type {
+                BuildingType::House => (),
+                BuildingType::MainBuilding { index: _ } => {
+                    let new_index = current_map.map.next_main_building_index();
+                    preview_building.building_type = BuildingType::MainBuilding { index: new_index }
+                }
+                BuildingType::Tower => (),
+            }
+
+            if !input.pressed(KeyCode::ShiftLeft) {
+                commands.entity(preview_building_entity).despawn();
+                editor_state.add_building_preveiw = None;
+            }
+        }
+    }
+}
+
+fn on_background_right_click(
+    click: On<Pointer<Click>>,
+    mut commands: Commands,
+    mut editor_state: ResMut<EditorState>,
+) {
+    if click.button != PointerButton::Secondary {
+        return;
+    }
+
+    if let Some(entity) = editor_state.selected_building {
+        commands.trigger(DeselectBuilding { entity });
+        editor_state.selected_building = None;
+    }
+
+    if let Some(preview_building_entity) = editor_state.add_building_preveiw {
+        commands.entity(preview_building_entity).despawn();
         editor_state.add_building_preveiw = None;
     }
 }

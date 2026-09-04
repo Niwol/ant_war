@@ -98,12 +98,21 @@ impl WorldGrid {
         self.cells.get(&coord).copied()
     }
 
+    pub fn in_grid(&self, coord: Coord) -> bool {
+        let translated = self.bottom_left.0 + coord.0;
+
+        translated.x >= 0
+            && translated.x < self.grid_size.x as i32
+            && translated.y >= 0
+            && translated.y < self.grid_size.y as i32
+    }
+
     pub fn cell_empty(&self, coord: Coord) -> bool {
         if let Some(cell) = self.cells.get(&coord) {
             return *cell == Cell::Empty;
         }
 
-        true
+        self.in_grid(coord)
     }
 
     pub fn all_cells_empty(&self, coords: &[Coord]) -> bool {
