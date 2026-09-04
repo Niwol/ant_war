@@ -54,6 +54,8 @@ pub struct BuildingSprites {
     pub house_sprites: HashMap<PlayerColor, Handle<Image>>,
     pub main_building_sprites: HashMap<PlayerColor, Handle<Image>>,
     pub tower_sprites: HashMap<PlayerColor, Handle<Image>>,
+    pub casern_sprites: HashMap<PlayerColor, Handle<Image>>,
+    pub walls_sprites: HashMap<PlayerColor, Handle<Image>>,
 }
 
 impl BuildingSprites {
@@ -64,6 +66,8 @@ impl BuildingSprites {
                 self.main_building_sprites[&player_color].clone()
             }
             BuildingType::Tower => self.tower_sprites[&player_color].clone(),
+            BuildingType::Casern => self.casern_sprites[&player_color].clone(),
+            BuildingType::Walls => self.walls_sprites[&player_color].clone(),
         }
     }
 }
@@ -107,6 +111,30 @@ fn load_building_sprites(mut commands: Commands, assets: Res<AssetServer>) {
             (PlayerColor::Aqua, assets.load(PATH_TOWER_AQUA)),
             (PlayerColor::Pink, assets.load(PATH_TOWER_PINK)),
             (PlayerColor::Neutral, assets.load(PATH_TOWER_NEUTRAL)),
+        ]),
+
+        casern_sprites: HashMap::from([
+            (PlayerColor::Blue, assets.load(PATH_CASERN_BLUE)),
+            (PlayerColor::Red, assets.load(PATH_CASERN_RED)),
+            (PlayerColor::Green, assets.load(PATH_CASERN_GREEN)),
+            (PlayerColor::Orange, assets.load(PATH_CASERN_ORANGE)),
+            (PlayerColor::Purple, assets.load(PATH_CASERN_PURPLE)),
+            (PlayerColor::Yellow, assets.load(PATH_CASERN_YELLOW)),
+            (PlayerColor::Aqua, assets.load(PATH_CASERN_AQUA)),
+            (PlayerColor::Pink, assets.load(PATH_CASERN_PINK)),
+            (PlayerColor::Neutral, assets.load(PATH_CASERN_NEUTRAL)),
+        ]),
+
+        walls_sprites: HashMap::from([
+            (PlayerColor::Blue, assets.load(PATH_WALLS_BLUE)),
+            (PlayerColor::Red, assets.load(PATH_WALLS_RED)),
+            (PlayerColor::Green, assets.load(PATH_WALLS_GREEN)),
+            (PlayerColor::Orange, assets.load(PATH_WALLS_ORANGE)),
+            (PlayerColor::Purple, assets.load(PATH_WALLS_PURPLE)),
+            (PlayerColor::Yellow, assets.load(PATH_WALLS_YELLOW)),
+            (PlayerColor::Aqua, assets.load(PATH_WALLS_AQUA)),
+            (PlayerColor::Pink, assets.load(PATH_WALLS_PINK)),
+            (PlayerColor::Neutral, assets.load(PATH_WALLS_NEUTRAL)),
         ]),
     };
 
@@ -200,6 +228,8 @@ fn spawn_building(spawn: On<SpawnBuilding>, mut commands: Commands) {
                 }
             });
         }
+        BuildingType::Casern => todo!(),
+        BuildingType::Walls => todo!(),
     }
 }
 

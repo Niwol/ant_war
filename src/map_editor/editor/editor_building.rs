@@ -17,8 +17,6 @@ use crate::{
 pub struct EditorBuildingPlugin;
 impl Plugin for EditorBuildingPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, update_building_texts);
-
         app.add_observer(spawn_building);
     }
 }
@@ -58,9 +56,8 @@ impl EditorBuilding {
             building::asset_paths::get_path(props.building_type, props.player_color);
 
         let building_text = match props.building_type {
-            BuildingType::House => format!("House"),
             BuildingType::HeadQuarter { index } => format!("HQ {index}"),
-            BuildingType::Tower => format!("Tower"),
+            other => other.name(),
         };
 
         bsn! {
@@ -348,22 +345,5 @@ fn drag_building(
         commands.entity(building_entity).remove::<InvalidLocation>();
     } else {
         commands.entity(building_entity).insert(InvalidLocation);
-    }
-}
-
-fn update_building_texts(
-    buildings: Query<(Entity, &EditorBuilding), Changed<EditorBuilding>>,
-    mut building_texts: Query<(&ChildOf, &mut Text2d)>,
-) {
-    for (entity, editor_building) in &buildings {
-        for (child_of, mut text) in &mut building_texts {
-            if entity == child_of.0 {
-                text.0 = match editor_building.building_type {
-                    BuildingType::House => format!("House"),
-                    BuildingType::HeadQuarter { index } => format!("HQ {index}"),
-                    BuildingType::Tower => format!("Tower"),
-                }
-            }
-        }
     }
 }

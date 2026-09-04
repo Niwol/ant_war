@@ -147,9 +147,8 @@ fn loading_map(
             .building_infos_as_vec()
             .into_iter()
             .filter_map(|building_info| match building_info.building_type {
-                BuildingType::House => None,
                 BuildingType::HeadQuarter { index } => Some((index, 0)),
-                BuildingType::Tower => None,
+                _ => None,
             })
             .collect::<HashMap<_, _>>();
 

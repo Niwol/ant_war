@@ -9,6 +9,8 @@ pub enum BuildingType {
         index: usize,
     },
     Tower,
+    Casern,
+    Walls,
 }
 
 impl BuildingType {
@@ -17,6 +19,19 @@ impl BuildingType {
             BuildingType::House => UVec2::splat(3),
             BuildingType::HeadQuarter { index: _ } => UVec2::splat(4),
             BuildingType::Tower => UVec2::splat(2),
+            BuildingType::Casern => UVec2::splat(3),
+            BuildingType::Walls => UVec2::splat(5),
         }
+    }
+
+    pub fn name(&self) -> String {
+        match self {
+            BuildingType::House => "House",
+            BuildingType::HeadQuarter { index: _ } => "Head Quarter",
+            BuildingType::Tower => "Tower",
+            BuildingType::Casern => "Casern",
+            BuildingType::Walls => "Walls",
+        }
+        .to_string()
     }
 }

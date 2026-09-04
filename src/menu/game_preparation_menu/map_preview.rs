@@ -78,11 +78,10 @@ fn spawn_preview_scene(
         });
 
         match building_info.building_type {
-            BuildingType::House => (),
             BuildingType::HeadQuarter { index } => {
                 building.insert(MainBuildingIndex(index));
             }
-            BuildingType::Tower => (),
+            _ => (),
         }
     }
 

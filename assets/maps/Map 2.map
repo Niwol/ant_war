@@ -3,7 +3,7 @@
     map_size: (50, 30),
     max_players: 2,
     building_infos: {(5): (
-        building_type: MainBuilding(
+        building_type: HeadQuarter(
             index: 2,
         ),
         grid_transform: (
@@ -17,7 +17,7 @@
             bottom_left_coord: ((29, 9)),
         ),
     ), (4): (
-        building_type: MainBuilding(
+        building_type: HeadQuarter(
             index: 1,
         ),
         grid_transform: (

@@ -133,12 +133,11 @@ fn spawn_map(
     for (building_id, building_info) in map.building_infos() {
         let mut player_ref = None;
         match building_info.building_type {
-            BuildingType::House => (),
             BuildingType::HeadQuarter { index } => {
                 let player_id = spawn_map.game_preparation_info.building_assignements[&index];
                 player_ref = player_refs.get(&player_id).copied();
             }
-            BuildingType::Tower => (),
+            _ => (),
         }
 
         if let Some(player_ref) = player_ref {

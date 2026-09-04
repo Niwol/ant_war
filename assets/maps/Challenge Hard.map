@@ -27,7 +27,7 @@
             bottom_left_coord: ((51, 41)),
         ),
     ), (1): (
-        building_type: MainBuilding(
+        building_type: HeadQuarter(
             index: 2,
         ),
         grid_transform: (
@@ -227,7 +227,7 @@
             bottom_left_coord: ((30, 8)),
         ),
     ), (0): (
-        building_type: MainBuilding(
+        building_type: HeadQuarter(
             index: 1,
         ),
         grid_transform: (

@@ -128,13 +128,12 @@ impl Map {
             .iter()
             .find(|building_info| {
                 match building_info.building_type {
-                    BuildingType::House => (),
                     BuildingType::HeadQuarter { index } => {
                         if index == index_to_assigne {
                             return true;
                         }
                     }
-                    BuildingType::Tower => (),
+                    _ => (),
                 }
 
                 false

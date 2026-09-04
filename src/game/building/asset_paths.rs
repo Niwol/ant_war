@@ -35,6 +35,26 @@ pub const PATH_TOWER_AQUA: &str = "sprites/buildings/tower/tower_aqua.png";
 pub const PATH_TOWER_PINK: &str = "sprites/buildings/tower/tower_pink.png";
 pub const PATH_TOWER_NEUTRAL: &str = "sprites/buildings/tower/tower_neutral.png";
 
+pub const PATH_CASERN_BLUE: &str = "sprites/buildings/casern/casern_blue.png";
+pub const PATH_CASERN_RED: &str = "sprites/buildings/casern/casern_red.png";
+pub const PATH_CASERN_GREEN: &str = "sprites/buildings/casern/casern_green.png";
+pub const PATH_CASERN_ORANGE: &str = "sprites/buildings/casern/casern_orange.png";
+pub const PATH_CASERN_PURPLE: &str = "sprites/buildings/casern/casern_purple.png";
+pub const PATH_CASERN_YELLOW: &str = "sprites/buildings/casern/casern_yellow.png";
+pub const PATH_CASERN_AQUA: &str = "sprites/buildings/casern/casern_aqua.png";
+pub const PATH_CASERN_PINK: &str = "sprites/buildings/casern/casern_pink.png";
+pub const PATH_CASERN_NEUTRAL: &str = "sprites/buildings/casern/casern_neutral.png";
+
+pub const PATH_WALLS_BLUE: &str = "sprites/buildings/walls/walls_blue.png";
+pub const PATH_WALLS_RED: &str = "sprites/buildings/walls/walls_red.png";
+pub const PATH_WALLS_GREEN: &str = "sprites/buildings/walls/walls_green.png";
+pub const PATH_WALLS_ORANGE: &str = "sprites/buildings/walls/walls_orange.png";
+pub const PATH_WALLS_PURPLE: &str = "sprites/buildings/walls/walls_purple.png";
+pub const PATH_WALLS_YELLOW: &str = "sprites/buildings/walls/walls_yellow.png";
+pub const PATH_WALLS_AQUA: &str = "sprites/buildings/walls/walls_aqua.png";
+pub const PATH_WALLS_PINK: &str = "sprites/buildings/walls/walls_pink.png";
+pub const PATH_WALLS_NEUTRAL: &str = "sprites/buildings/walls/walls_neutral.png";
+
 pub fn get_path(building_type: BuildingType, player_color: PlayerColor) -> &'static str {
     match building_type {
         BuildingType::House => match player_color {
@@ -71,6 +91,30 @@ pub fn get_path(building_type: BuildingType, player_color: PlayerColor) -> &'sta
             PlayerColor::Aqua => PATH_TOWER_AQUA,
             PlayerColor::Pink => PATH_TOWER_PINK,
             PlayerColor::Neutral => PATH_TOWER_NEUTRAL,
+        },
+
+        BuildingType::Casern => match player_color {
+            PlayerColor::Blue => PATH_CASERN_BLUE,
+            PlayerColor::Red => PATH_CASERN_RED,
+            PlayerColor::Green => PATH_CASERN_GREEN,
+            PlayerColor::Orange => PATH_CASERN_ORANGE,
+            PlayerColor::Purple => PATH_CASERN_PURPLE,
+            PlayerColor::Yellow => PATH_CASERN_YELLOW,
+            PlayerColor::Aqua => PATH_CASERN_AQUA,
+            PlayerColor::Pink => PATH_CASERN_PINK,
+            PlayerColor::Neutral => PATH_CASERN_NEUTRAL,
+        },
+
+        BuildingType::Walls => match player_color {
+            PlayerColor::Blue => PATH_WALLS_BLUE,
+            PlayerColor::Red => PATH_WALLS_RED,
+            PlayerColor::Green => PATH_WALLS_GREEN,
+            PlayerColor::Orange => PATH_WALLS_ORANGE,
+            PlayerColor::Purple => PATH_WALLS_PURPLE,
+            PlayerColor::Yellow => PATH_WALLS_YELLOW,
+            PlayerColor::Aqua => PATH_WALLS_AQUA,
+            PlayerColor::Pink => PATH_WALLS_PINK,
+            PlayerColor::Neutral => PATH_WALLS_NEUTRAL,
         },
     }
 }

@@ -84,20 +84,20 @@ fn left_panel(map_name: impl Into<String>) -> impl Scene {
 
             flex_direction: FlexDirection::Column,
 
+            min_width: percent(15.0),
+
             border: px(3.0),
             border_radius: px(5.0)
             padding: px(5.0),
 
-            row_gap: px(5.0),
+            row_gap: px(20.0),
         }
         BorderColor::all(WHITE)
 
         Children [
             map_name_label(map_name),
             map_size_text_input(),
-            add_house_button(),
-            add_head_quarter_button(),
-            add_tower_button(),
+            add_building_buttons(),
             save_button(),
             main_menu_button()
         ]
@@ -160,42 +160,39 @@ fn map_size_text_input() -> impl Scene {
     }
 }
 
-fn add_house_button() -> impl Scene {
+fn add_building_buttons() -> impl Scene {
     bsn! {
-        @FeathersButton {
-            @caption: bsn! {
-                Text::new("Add house")
-                ThemedText
-            }
+        Node {
+            flex_direction: FlexDirection::Column,
+
+            row_gap: px(5.0),
         }
 
-        on(add_house_button_clicked)
+        Children [
+            label("Add building"),
+
+            add_building_button(BuildingType::HeadQuarter { index: 0 })
+            on(on_add_head_quarter_clicked),
+
+            add_building_button(BuildingType::House)
+            on(add_house_button_clicked),
+
+            add_building_button(BuildingType::Tower)
+            on(add_tower_button_clicked),
+        ]
     }
 }
 
-fn add_head_quarter_button() -> impl Scene {
+fn add_building_button(building_type: BuildingType) -> impl Scene {
+    let button_text = building_type.name();
+
     bsn! {
         @FeathersButton {
             @caption: bsn! {
-                Text::new("Add Head Quarter")
+                Text::new(button_text)
                 ThemedText
             }
         }
-
-        on(on_add_head_quarter_clicked)
-    }
-}
-
-fn add_tower_button() -> impl Scene {
-    bsn! {
-        @FeathersButton {
-            @caption: bsn! {
-                Text::new("Add Tower")
-                ThemedText
-            }
-        }
-
-        on(add_tower_button_clicked)
     }
 }
 
