@@ -60,7 +60,7 @@ impl BuildingSprites {
     pub fn get(&self, building_type: BuildingType, player_color: PlayerColor) -> Handle<Image> {
         match building_type {
             BuildingType::House => self.house_sprites[&player_color].clone(),
-            BuildingType::MainBuilding { index: _ } => {
+            BuildingType::HeadQuarter { index: _ } => {
                 self.main_building_sprites[&player_color].clone()
             }
             BuildingType::Tower => self.tower_sprites[&player_color].clone(),
@@ -185,7 +185,7 @@ fn spawn_building(spawn: On<SpawnBuilding>, mut commands: Commands) {
                 }
             });
         }
-        BuildingType::MainBuilding { index } => {
+        BuildingType::HeadQuarter { index } => {
             commands.spawn_scene(bsn! {
                 @MainBuilding {
                     @building_props,

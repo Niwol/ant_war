@@ -21,13 +21,13 @@ impl MainBuilding {
     fn scene(props: MainBuildingProps) -> impl Scene {
         let building_props = props.building_props;
         let image_path = super::asset_paths::get_path(
-            BuildingType::MainBuilding { index: 0 },
+            BuildingType::HeadQuarter { index: 0 },
             PlayerColor::Neutral,
         );
 
         bsn! {
             @Building {
-                building_type: BuildingType::MainBuilding {
+                building_type: BuildingType::HeadQuarter  {
                     index: {props.main_building_index}
                 }
                 @building_id: {building_props.building_id},

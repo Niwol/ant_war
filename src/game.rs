@@ -134,7 +134,7 @@ fn spawn_map(
         let mut player_ref = None;
         match building_info.building_type {
             BuildingType::House => (),
-            BuildingType::MainBuilding { index } => {
+            BuildingType::HeadQuarter { index } => {
                 let player_id = spawn_map.game_preparation_info.building_assignements[&index];
                 player_ref = player_refs.get(&player_id).copied();
             }

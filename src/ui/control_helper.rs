@@ -15,7 +15,7 @@ Right Ctrl + LMB: Deselect building
 RMB: Send units
 
 Buildings:
-Big (Main Building)
+Big (Head Quarter)
     - Production speed: 1 unit / sec
     - Max capacity: 40 units
 Small (House):

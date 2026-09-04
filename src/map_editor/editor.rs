@@ -184,14 +184,14 @@ struct ResizeMap {
     new_size: UVec2,
 }
 
-pub fn on_add_main_building_clicked(
+pub fn on_add_head_quarter_clicked(
     _: On<Activate>,
     mut commands: Commands,
     current_map: Res<CurrentMap>,
 ) {
-    let index = current_map.map.next_main_building_index();
+    let index = current_map.map.next_head_quarter_index();
 
-    let building_type = BuildingType::MainBuilding { index };
+    let building_type = BuildingType::HeadQuarter { index };
     commands.trigger(AddBuilding(building_type));
 }
 

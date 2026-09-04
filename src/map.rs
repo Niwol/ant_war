@@ -120,7 +120,7 @@ impl Map {
         id
     }
 
-    pub fn next_main_building_index(&self) -> usize {
+    pub fn next_head_quarter_index(&self) -> usize {
         let mut index_to_assigne = 1;
 
         while self
@@ -129,7 +129,7 @@ impl Map {
             .find(|building_info| {
                 match building_info.building_type {
                     BuildingType::House => (),
-                    BuildingType::MainBuilding { index } => {
+                    BuildingType::HeadQuarter { index } => {
                         if index == index_to_assigne {
                             return true;
                         }

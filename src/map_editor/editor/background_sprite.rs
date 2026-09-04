@@ -82,9 +82,9 @@ fn on_background_left_click(
 
             match preview_building.building_type {
                 BuildingType::House => (),
-                BuildingType::MainBuilding { index: _ } => {
-                    let new_index = current_map.map.next_main_building_index();
-                    preview_building.building_type = BuildingType::MainBuilding { index: new_index }
+                BuildingType::HeadQuarter { index: _ } => {
+                    let new_index = current_map.map.next_head_quarter_index();
+                    preview_building.building_type = BuildingType::HeadQuarter { index: new_index }
                 }
                 BuildingType::Tower => (),
             }

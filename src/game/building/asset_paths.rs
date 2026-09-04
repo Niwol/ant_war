@@ -49,7 +49,7 @@ pub fn get_path(building_type: BuildingType, player_color: PlayerColor) -> &'sta
             PlayerColor::Neutral => PATH_HOUSE_NEUTRAL,
         },
 
-        BuildingType::MainBuilding { index: _ } => match player_color {
+        BuildingType::HeadQuarter { index: _ } => match player_color {
             PlayerColor::Blue => PATH_MAIN_BUILDING_BLUE,
             PlayerColor::Red => PATH_MAIN_BUILDING_RED,
             PlayerColor::Green => PATH_MAIN_BUILDING_GREEN,

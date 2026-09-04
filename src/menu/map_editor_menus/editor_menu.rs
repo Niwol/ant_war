@@ -17,7 +17,7 @@ use crate::{
     game::building::building_type::BuildingType,
     map_editor::{
         MapEditorState,
-        editor::{self, AddBuilding, CurrentMap, SaveMap, on_add_main_building_clicked},
+        editor::{self, AddBuilding, CurrentMap, SaveMap, on_add_head_quarter_clicked},
     },
     world_grid::coord::Coord,
 };
@@ -96,7 +96,7 @@ fn left_panel(map_name: impl Into<String>) -> impl Scene {
             map_name_label(map_name),
             map_size_text_input(),
             add_house_button(),
-            add_main_building_button(),
+            add_head_quarter_button(),
             add_tower_button(),
             save_button(),
             main_menu_button()
@@ -173,16 +173,16 @@ fn add_house_button() -> impl Scene {
     }
 }
 
-fn add_main_building_button() -> impl Scene {
+fn add_head_quarter_button() -> impl Scene {
     bsn! {
         @FeathersButton {
             @caption: bsn! {
-                Text::new("Add Main building")
+                Text::new("Add Head Quarter")
                 ThemedText
             }
         }
 
-        on(on_add_main_building_clicked)
+        on(on_add_head_quarter_clicked)
     }
 }
 

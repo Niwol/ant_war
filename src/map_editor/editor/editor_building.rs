@@ -59,7 +59,7 @@ impl EditorBuilding {
 
         let building_text = match props.building_type {
             BuildingType::House => format!("House"),
-            BuildingType::MainBuilding { index } => format!("HQ {index}"),
+            BuildingType::HeadQuarter { index } => format!("HQ {index}"),
             BuildingType::Tower => format!("Tower"),
         };
 
@@ -360,7 +360,7 @@ fn update_building_texts(
             if entity == child_of.0 {
                 text.0 = match editor_building.building_type {
                     BuildingType::House => format!("House"),
-                    BuildingType::MainBuilding { index } => format!("HQ {index}"),
+                    BuildingType::HeadQuarter { index } => format!("HQ {index}"),
                     BuildingType::Tower => format!("Tower"),
                 }
             }
