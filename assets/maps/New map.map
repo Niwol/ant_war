@@ -20,12 +20,6 @@
             size: (3, 3),
             bottom_left_coord: ((41, 31)),
         ),
-    ), (6): (
-        building_type: House,
-        grid_transform: (
-            size: (3, 3),
-            bottom_left_coord: ((43, 16)),
-        ),
     ), (1): (
         building_type: HeadQuarter(
             index: 2,
@@ -45,6 +39,12 @@
         grid_transform: (
             size: (3, 3),
             bottom_left_coord: ((9, 42)),
+        ),
+    ), (6): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((43, 16)),
         ),
     ), (8): (
         building_type: House,

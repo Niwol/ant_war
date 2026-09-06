@@ -1,10 +1,16 @@
 use bevy::prelude::*;
 
+use crate::game::projectiles::projectile_launcher::ProjectileLauncherPlugin;
+
+pub mod projectile_launcher;
+
 pub const PROJECTILE_SPEED: f32 = 200.0;
 
 pub struct ProjectilePlugin;
 impl Plugin for ProjectilePlugin {
     fn build(&self, app: &mut App) {
+        app.add_plugins(ProjectileLauncherPlugin);
+
         app.add_systems(Update, update_projectiles);
     }
 }

@@ -3,42 +3,36 @@ use bevy::prelude::*;
 use crate::game::{
     building::{Building, BuildingProps, building_type::BuildingType, inhabitants::Inhabitants},
     player::PlayerColor,
-    projectiles::projectile_launcher::ProjectileLauncher,
 };
-
-pub const TOWER_RANGE: f32 = 200.0;
-pub const TOWER_RELOAD_TIME: f32 = 1.0;
 
 pub fn plugin(_app: &mut App) {}
 
 #[derive(SceneComponent, Default, Clone)]
-#[scene(TowerProps)]
-pub struct Tower;
+#[scene(CasernProps)]
+pub struct Casern;
 
 #[derive(Default)]
-pub struct TowerProps {
+pub struct CasernProps {
     pub building_props: BuildingProps,
 }
 
-impl Tower {
-    fn scene(props: TowerProps) -> impl Scene {
+impl Casern {
+    fn scene(props: CasernProps) -> impl Scene {
         let building_props = props.building_props;
-        let image_path = super::asset_paths::get_path(BuildingType::Tower, PlayerColor::Neutral);
+        let image_path = super::asset_paths::get_path(BuildingType::Casern, PlayerColor::Neutral);
 
         bsn! {
             @Building {
-                building_type: BuildingType::Tower,
+                building_type: BuildingType::Casern,
                 @building_id: {building_props.building_id},
                 @grid_transform: {building_props.grid_transform}
             }
 
-            Inhabitants::new(5, 30, None)
+            Inhabitants::new(5, 20, Some(Timer::from_seconds(5.0, TimerMode::Repeating)))
 
             Sprite {
                 image: image_path
             }
-
-            ProjectileLauncher::new(TOWER_RANGE, TOWER_RELOAD_TIME)
         }
     }
 }

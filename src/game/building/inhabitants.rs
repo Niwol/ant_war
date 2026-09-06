@@ -12,14 +12,29 @@ pub fn plugin(app: &mut App) {
         grow_inhabitants.run_if(in_state(GameState::Playing { paused: false })),
     );
 
+    app.add_systems(
+        Update,
+        shrink_inhabitants.run_if(in_state(GameState::Playing { paused: false })),
+    );
+
     app.add_observer(on_add_inhabitants);
 }
 
 #[derive(Component, Default, Clone)]
+#[require(ShrinkTimer)]
 pub struct Inhabitants {
     current: i32,
     max: i32,
     grow_timer: Option<Timer>,
+}
+
+#[derive(Component, Clone)]
+struct ShrinkTimer(Timer);
+
+impl Default for ShrinkTimer {
+    fn default() -> Self {
+        Self(Timer::from_seconds(1.0, TimerMode::Repeating))
+    }
 }
 
 impl Inhabitants {
@@ -136,16 +151,33 @@ fn update_inhabitants_text(
 
 fn grow_inhabitants(time: Res<Time>, mut inhabitants: Query<&mut Inhabitants, With<PlayerRef>>) {
     for mut inhabitants in &mut inhabitants {
+        if inhabitants.current >= inhabitants.max {
+            continue;
+        }
+
         if let Some(grow_timer) = &mut inhabitants.grow_timer {
             grow_timer.tick(time.delta());
 
             if grow_timer.just_finished() {
-                if inhabitants.current < inhabitants.max {
-                    inhabitants.current += 1;
-                } else if inhabitants.current > inhabitants.max {
-                    inhabitants.current -= 1;
-                }
+                inhabitants.current += 1;
             }
+        }
+    }
+}
+
+fn shrink_inhabitants(
+    time: Res<Time>,
+    mut inhabitants: Query<(&mut Inhabitants, &mut ShrinkTimer), With<PlayerRef>>,
+) {
+    for (mut inhabitants, mut shrink_timer) in &mut inhabitants {
+        if inhabitants.current > inhabitants.max {
+            shrink_timer.0.tick(time.delta());
+
+            if shrink_timer.0.just_finished() {
+                inhabitants.current -= 1;
+            }
+        } else {
+            shrink_timer.0.reset();
         }
     }
 }
