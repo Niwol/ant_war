@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     game::{
         InGameEntity,
-        ant::ant_spawner::SapwnAntSpawner,
+        ant::ant_spawner::AntSpawner,
         bot::Bot,
         building::{
             asset_paths::*,
@@ -254,18 +254,28 @@ fn spawn_building(spawn: On<SpawnBuilding>, mut commands: Commands) {
 fn on_move_order(
     order: On<MoveOrder>,
     mut commands: Commands,
-    mut buildings: Query<(&mut Inhabitants, &PlayerRef, &Transform)>,
+    mut buildings: Query<(&Building, &mut Inhabitants, &PlayerRef, &Transform)>,
 ) {
-    let (mut inhabitants, player_ref, transform) = buildings.get_mut(order.entity).unwrap();
+    let (building, mut inhabitants, player_ref, transform) =
+        buildings.get_mut(order.entity).unwrap();
 
     let to_move = inhabitants.current() / 2 + inhabitants.current() % 2;
+    if to_move == 0 {
+        return;
+    }
+
+    let ant_type = building.building_type.ants_produced();
     inhabitants.take(to_move);
 
-    commands.trigger(SapwnAntSpawner {
-        position: transform.translation.xy(),
-        nb_to_spawn: to_move as u32,
-        target_building: order.target,
-        player_ref: player_ref.clone(),
+    commands.spawn_scene(bsn! {
+        @AntSpawner {
+            ant_type,
+            left_to_spawn: {to_move as u32},
+            target_building: {order.target},
+            spawn_timer: Timer::from_seconds(0.2, TimerMode::Repeating),
+            @position: {transform.translation.xy()}
+        }
+        PlayerRef({player_ref.0})
     });
 }
 

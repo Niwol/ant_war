@@ -5,12 +5,16 @@ use crate::game::{
     ant::{ant_spawner::AntSpawnerPlugin, ant_type::AntType},
     building::{Building, inhabitants::Inhabitants},
     game_info::GameState,
-    player::{PlayerColor, PlayerRef},
+    player::PlayerRef,
 };
 
 pub mod ant_spawner;
+pub mod ant_stats;
 pub mod ant_type;
 pub mod asset_paths;
+pub mod soldier;
+pub mod unit;
+pub mod worker;
 
 pub struct AntPlugin;
 impl Plugin for AntPlugin {
@@ -31,30 +35,24 @@ struct EnterBuilding {
     building: Entity,
 }
 
+#[derive(Component, Clone, FromTemplate)]
+pub struct AntTarget(pub Entity);
+
 #[derive(SceneComponent, FromTemplate, Clone)]
 #[scene(AntProps)]
 #[require(InGameEntity)]
 pub struct Ant {
     _ant_type: AntType,
-    target_building: Entity,
 }
 
 #[derive(Default)]
 pub struct AntProps {
-    ant_type: AntType,
-    position: Vec2,
-    player_color: PlayerColor,
+    pub position: Vec2,
 }
 
 impl Ant {
     fn scene(props: AntProps) -> impl Scene {
-        let image_path = asset_paths::get_path(props.ant_type, props.player_color);
-
         bsn! {
-            Sprite {
-                image: image_path,
-            }
-
             Transform::from_xyz(props.position.x, props.position.y, 0.0)
             on(enter_building)
         }
@@ -64,11 +62,11 @@ impl Ant {
 fn update_ants(
     time: Res<Time>,
     mut commands: Commands,
-    mut ants: Query<(Entity, &mut Transform, &Ant)>,
+    mut ants: Query<(Entity, &AntTarget, &mut Transform), With<Ant>>,
     buildings: Query<&Transform, (With<Building>, Without<Ant>)>,
 ) {
-    for (entity, mut ant_transform, ant) in &mut ants {
-        let building = buildings.get(ant.target_building).unwrap();
+    for (entity, ant_target, mut ant_transform) in &mut ants {
+        let building = buildings.get(ant_target.0).unwrap();
 
         let to_building = building.translation - ant_transform.translation;
         let to_building_norm = to_building.normalize_or_zero();
@@ -78,7 +76,7 @@ fn update_ants(
         if to_building.length() < 2.0 {
             commands.trigger(EnterBuilding {
                 ant: entity,
-                building: ant.target_building,
+                building: ant_target.0,
             });
         }
     }

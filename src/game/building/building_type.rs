@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
+use crate::game::ant::ant_type::AntType;
+
 #[derive(Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 pub enum BuildingType {
     #[default]
@@ -33,5 +35,15 @@ impl BuildingType {
             BuildingType::Walls => "Walls",
         }
         .to_string()
+    }
+
+    pub fn ants_produced(&self) -> AntType {
+        match self {
+            BuildingType::House => AntType::Unit,
+            BuildingType::HeadQuarter { index: _ } => AntType::Worker,
+            BuildingType::Tower => AntType::Unit,
+            BuildingType::Casern => AntType::Soldier,
+            BuildingType::Walls => AntType::Unit,
+        }
     }
 }

@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::game::{
     InGameEntity,
-    ant::{Ant, ant_type::AntType},
+    ant::{AntProps, AntTarget, ant_type::AntType, soldier::Soldier, unit::Unit, worker::Worker},
     game_info::GameState,
     player::{Player, PlayerRef},
 };
@@ -14,51 +14,41 @@ impl Plugin for AntSpawnerPlugin {
             Update,
             update_ant_spawners.run_if(in_state(GameState::Playing { paused: false })),
         );
-
-        app.add_observer(spawn_ant_spawner);
     }
 }
 
-#[derive(Event)]
-pub struct SapwnAntSpawner {
-    pub position: Vec2,
-    pub nb_to_spawn: u32,
-    pub target_building: Entity,
-    pub player_ref: PlayerRef,
-}
-
-#[derive(Component, Clone)]
+#[derive(SceneComponent, FromTemplate, Clone)]
+#[scene(AntSpawnerProps)]
 #[require(InGameEntity)]
 pub struct AntSpawner {
-    left_to_spawn: u32,
-    spawn_timer: Timer,
-    target_building: Entity,
+    pub ant_type: AntType,
+    pub left_to_spawn: u32,
+    pub target_building: Entity,
+    pub spawn_timer: Timer,
 }
 
 impl Default for AntSpawner {
     fn default() -> Self {
         Self {
+            ant_type: AntType::Unit,
             left_to_spawn: 0,
-            spawn_timer: Timer::default(),
             target_building: Entity::PLACEHOLDER,
+            spawn_timer: Timer::from_seconds(0.2, TimerMode::Repeating),
         }
     }
 }
 
-fn spawn_ant_spawner(spawn: On<SapwnAntSpawner>, mut commands: Commands) {
-    let position = spawn.position;
+#[derive(Default)]
+pub struct AntSpawnerProps {
+    pub position: Vec2,
+}
 
-    commands.spawn_scene(bsn! {
-        AntSpawner {
-            left_to_spawn: { spawn.nb_to_spawn },
-            spawn_timer: Timer::from_seconds(0.2, TimerMode::Repeating),
-            target_building: { spawn.target_building }
+impl AntSpawner {
+    fn scene(props: AntSpawnerProps) -> impl Scene {
+        bsn! {
+            Transform::from_xyz(props.position.x, props.position.y, 0.0)
         }
-
-        PlayerRef({spawn.player_ref.0})
-
-        Transform::from_xyz(position.x, position.y, 0.0)
-    });
+    }
 }
 
 fn update_ant_spawners(
@@ -74,16 +64,37 @@ fn update_ant_spawners(
             ant_spawner.left_to_spawn -= 1;
             let player = players.get(player_ref.0).unwrap();
 
-            commands.spawn_scene(bsn! {
-                @Ant {
-                    _ant_type: AntType::Unit,
-                    target_building: {ant_spawner.target_building},
+            let ant_props = AntProps {
+                position: transform.translation.xy(),
+            };
 
-                    @position: {transform.translation.xy()},
-                    @player_color: {player.player_color},
-                }
-                PlayerRef({player_ref.0})
-            });
+            let mut ant_commands = match ant_spawner.ant_type {
+                AntType::Unit => commands.spawn_scene(bsn! {
+                        @Unit {
+                        @ant_props,
+                        @player_color: {player.player_color},
+                    }
+                }),
+
+                AntType::Worker => commands.spawn_scene(bsn! {
+                        @Worker {
+                        @ant_props,
+                        @player_color: {player.player_color},
+                    }
+                }),
+
+                AntType::Soldier => commands.spawn_scene(bsn! {
+                        @Soldier {
+                        @ant_props,
+                        @player_color: {player.player_color},
+                    }
+                }),
+            };
+
+            ant_commands.insert((
+                AntTarget(ant_spawner.target_building),
+                PlayerRef(player_ref.0),
+            ));
         }
 
         if ant_spawner.left_to_spawn == 0 {
