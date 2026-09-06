@@ -17,7 +17,7 @@ use crate::{
     game::building::building_type::BuildingType,
     map_editor::{
         MapEditorState,
-        editor::{self, AddBuilding, CurrentMap, SaveMap, on_add_head_quarter_clicked},
+        editor::{self, AddBuilding, CurrentMap, SaveMap},
     },
     world_grid::coord::Coord,
 };
@@ -171,14 +171,11 @@ fn add_building_buttons() -> impl Scene {
         Children [
             label("Add building"),
 
-            add_building_button(BuildingType::HeadQuarter { index: 0 })
-            on(on_add_head_quarter_clicked),
-
-            add_building_button(BuildingType::House)
-            on(add_house_button_clicked),
-
-            add_building_button(BuildingType::Tower)
-            on(add_tower_button_clicked),
+            add_building_button(BuildingType::HeadQuarter { index: 0 }),
+            add_building_button(BuildingType::House),
+            add_building_button(BuildingType::Tower),
+            add_building_button(BuildingType::Casern),
+            add_building_button(BuildingType::Walls),
         ]
     }
 }
@@ -193,6 +190,9 @@ fn add_building_button(building_type: BuildingType) -> impl Scene {
                 ThemedText
             }
         }
+        on(move |_: On<Activate>, mut commands: Commands| {
+            commands.trigger(AddBuilding(building_type));
+        })
     }
 }
 
@@ -220,14 +220,6 @@ fn main_menu_button() -> impl Scene {
 
         on(main_menu_clicked)
     }
-}
-
-fn add_house_button_clicked(_: On<Activate>, mut commands: Commands) {
-    commands.trigger(AddBuilding(BuildingType::House));
-}
-
-fn add_tower_button_clicked(_: On<Activate>, mut commands: Commands) {
-    commands.trigger(AddBuilding(BuildingType::Tower));
 }
 
 fn save_button_clicked(_: On<Activate>, mut commands: Commands) {

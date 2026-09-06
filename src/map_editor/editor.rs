@@ -1,7 +1,7 @@
 use bevy::{
     feathers::controls::{NumberInputValue, UpdateNumberInput},
     prelude::*,
-    ui_widgets::{Activate, ValueChange},
+    ui_widgets::ValueChange,
 };
 
 use crate::{
@@ -182,17 +182,6 @@ pub struct AddBuilding(pub BuildingType);
 #[derive(Event)]
 struct ResizeMap {
     new_size: UVec2,
-}
-
-pub fn on_add_head_quarter_clicked(
-    _: On<Activate>,
-    mut commands: Commands,
-    current_map: Res<CurrentMap>,
-) {
-    let index = current_map.map.next_head_quarter_index();
-
-    let building_type = BuildingType::HeadQuarter { index };
-    commands.trigger(AddBuilding(building_type));
 }
 
 pub fn on_update_map_width(

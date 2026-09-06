@@ -52,7 +52,7 @@ fn on_background_left_click(
     mut commands: Commands,
     mut current_map: ResMut<CurrentMap>,
     mut editor_state: ResMut<EditorState>,
-    mut preview_building: Query<(&mut PreviewBuilding, &GridTransform)>,
+    preview_building: Query<(&PreviewBuilding, &GridTransform)>,
 ) {
     if click.button != PointerButton::Primary {
         return;
@@ -64,29 +64,28 @@ fn on_background_left_click(
     }
 
     if let Some(preview_building_entity) = editor_state.add_building_preveiw {
-        let (mut preview_building, grid_transform) =
-            preview_building.get_mut(preview_building_entity).unwrap();
+        let (preview_building, grid_transform) =
+            preview_building.get(preview_building_entity).unwrap();
 
-        let building_info = BuildingInfo {
-            building_type: preview_building.building_type,
-            grid_transform: *grid_transform,
-        };
+        if world_grid.all_cells_empty(&grid_transform.get_coords()) {
+            let building_type = match preview_building.building_type {
+                BuildingType::HeadQuarter { index: _ } => BuildingType::HeadQuarter {
+                    index: current_map.map.next_head_quarter_index(),
+                },
+                _ => preview_building.building_type,
+            };
 
-        if world_grid.all_cells_empty(&building_info.grid_transform.get_coords()) {
+            let building_info = BuildingInfo {
+                building_type: building_type,
+                grid_transform: *grid_transform,
+            };
+
             let building_id = current_map.map.add_building(building_info);
 
             commands.trigger(SpawnEditorBuilding {
                 building_id,
                 building_info,
             });
-
-            match preview_building.building_type {
-                BuildingType::HeadQuarter { index: _ } => {
-                    let new_index = current_map.map.next_head_quarter_index();
-                    preview_building.building_type = BuildingType::HeadQuarter { index: new_index }
-                }
-                _ => (),
-            }
 
             if !input.pressed(KeyCode::ShiftLeft) {
                 commands.entity(preview_building_entity).despawn();
