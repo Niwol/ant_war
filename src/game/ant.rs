@@ -2,13 +2,15 @@ use bevy::prelude::*;
 
 use crate::game::{
     InGameEntity,
-    ant::ant_spawner::AntSpawnerPlugin,
+    ant::{ant_spawner::AntSpawnerPlugin, ant_type::AntType},
     building::{Building, inhabitants::Inhabitants},
     game_info::GameState,
-    player::{Player, PlayerRef},
+    player::{PlayerColor, PlayerRef},
 };
 
 pub mod ant_spawner;
+pub mod ant_type;
+pub mod asset_paths;
 
 pub struct AntPlugin;
 impl Plugin for AntPlugin {
@@ -19,16 +21,7 @@ impl Plugin for AntPlugin {
             FixedUpdate,
             update_ants.run_if(in_state(GameState::Playing { paused: false })),
         );
-
-        app.add_observer(spawn_ant);
     }
-}
-
-#[derive(Event)]
-struct SpawnAnt {
-    player_ref: PlayerRef,
-    position: Vec2,
-    target: Entity,
 }
 
 #[derive(EntityEvent)]
@@ -38,41 +31,34 @@ struct EnterBuilding {
     building: Entity,
 }
 
-#[derive(Component, Clone)]
+#[derive(SceneComponent, FromTemplate, Clone)]
+#[scene(AntProps)]
 #[require(InGameEntity)]
 pub struct Ant {
+    _ant_type: AntType,
     target_building: Entity,
 }
 
-impl Default for Ant {
-    fn default() -> Self {
-        Self {
-            target_building: Entity::PLACEHOLDER,
-        }
-    }
+#[derive(Default)]
+pub struct AntProps {
+    ant_type: AntType,
+    position: Vec2,
+    player_color: PlayerColor,
 }
 
-fn spawn_ant(spawn: On<SpawnAnt>, mut commands: Commands, players: Query<&Player>) {
-    let position = spawn.position;
-    let player_ref = spawn.player_ref;
-    let player = players.get(player_ref.0).unwrap();
+impl Ant {
+    fn scene(props: AntProps) -> impl Scene {
+        let image_path = asset_paths::get_path(props.ant_type, props.player_color);
 
-    commands
-        .spawn_scene(bsn! {
-            Ant {
-                target_building: { spawn.target }
-            }
-
+        bsn! {
             Sprite {
-                color: { player.player_color.color() },
-                custom_size: { Vec2::splat(8.0) }
+                image: image_path,
             }
 
-            PlayerRef({player_ref.0})
-
-            Transform::from_xyz(position.x, position.y, 0.0)
-        })
-        .observe(enter_building);
+            Transform::from_xyz(props.position.x, props.position.y, 0.0)
+            on(enter_building)
+        }
+    }
 }
 
 fn update_ants(

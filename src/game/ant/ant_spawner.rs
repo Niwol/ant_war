@@ -1,6 +1,11 @@
 use bevy::prelude::*;
 
-use crate::game::{InGameEntity, ant::SpawnAnt, game_info::GameState, player::PlayerRef};
+use crate::game::{
+    InGameEntity,
+    ant::{Ant, ant_type::AntType},
+    game_info::GameState,
+    player::{Player, PlayerRef},
+};
 
 pub struct AntSpawnerPlugin;
 impl Plugin for AntSpawnerPlugin {
@@ -60,17 +65,24 @@ fn update_ant_spawners(
     time: Res<Time>,
     mut commands: Commands,
     mut ant_spawners: Query<(Entity, &mut AntSpawner, &PlayerRef, &Transform)>,
+    players: Query<&Player>,
 ) {
     for (entity, mut ant_spawner, player_ref, transform) in &mut ant_spawners {
         ant_spawner.spawn_timer.tick(time.delta());
 
         if ant_spawner.spawn_timer.just_finished() {
             ant_spawner.left_to_spawn -= 1;
+            let player = players.get(player_ref.0).unwrap();
 
-            commands.trigger(SpawnAnt {
-                player_ref: *player_ref,
-                position: transform.translation.xy(),
-                target: ant_spawner.target_building,
+            commands.spawn_scene(bsn! {
+                @Ant {
+                    _ant_type: AntType::Unit,
+                    target_building: {ant_spawner.target_building},
+
+                    @position: {transform.translation.xy()},
+                    @player_color: {player.player_color},
+                }
+                PlayerRef({player_ref.0})
             });
         }
 
