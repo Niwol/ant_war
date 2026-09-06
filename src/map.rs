@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     AppState,
-    game::building::{BuildingId, building_type::BuildingType},
+    game::building::{BuildingId, building_types::BuildingType},
     manifest::Manifest,
     world_grid::{CELL_SIZE, grid_transform::GridTransform},
 };

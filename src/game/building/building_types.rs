@@ -3,6 +3,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::game::ant::ant_type::AntType;
 
+pub mod casern;
+pub mod house;
+pub mod main_building;
+pub mod tower;
+pub mod walls;
+
 #[derive(Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 pub enum BuildingType {
     #[default]

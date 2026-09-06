@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    game::building::building_type::BuildingType,
+    game::building::building_types::BuildingType,
     map::BuildingInfo,
     map_editor::{
         MapEditorEntity,

@@ -9,13 +9,13 @@ use crate::{
         building::{
             asset_paths::*,
             building_selection::{BuildingSelectionPlugin, SelectedBuildings},
-            building_type::BuildingType,
-            casern::Casern,
-            house::House,
+            building_types::BuildingType,
+            building_types::casern::Casern,
+            building_types::house::House,
+            building_types::main_building::MainBuilding,
+            building_types::tower::Tower,
+            building_types::walls::Walls,
             inhabitants::Inhabitants,
-            main_building::MainBuilding,
-            tower::Tower,
-            walls::Walls,
         },
         input::{self, InputMoveOrder},
         player::{Player, PlayerColor, PlayerRef},
@@ -25,23 +25,18 @@ use crate::{
 
 pub mod asset_paths;
 pub mod building_selection;
-pub mod building_type;
-pub mod casern;
-pub mod house;
+pub mod building_types;
 pub mod inhabitants;
-mod main_building;
-pub mod tower;
-pub mod walls;
 
 pub struct BuildingPlugin;
 impl Plugin for BuildingPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            main_building::plugin,
-            house::plugin,
-            tower::plugin,
-            casern::plugin,
-            walls::plugin,
+            building_types::main_building::plugin,
+            building_types::house::plugin,
+            building_types::tower::plugin,
+            building_types::casern::plugin,
+            building_types::walls::plugin,
             inhabitants::plugin,
             BuildingSelectionPlugin,
         ));

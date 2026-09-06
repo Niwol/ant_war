@@ -5,7 +5,7 @@ use bevy::{
 use crate::{
     game::{
         StartGame,
-        building::{self, building_type::BuildingType},
+        building::{self, building_types::BuildingType},
         player::{PLAYER_COLOR_LIST, PlayerColor},
     },
     map::{Map, MapAccess, MapCollection},

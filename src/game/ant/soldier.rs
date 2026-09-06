@@ -5,7 +5,7 @@ use crate::game::{
     player::PlayerColor,
 };
 
-const SOLDIER_SPEED: f32 = 50.0;
+const SOLDIER_SPEED: f32 = 40.0;
 const SOLDIER_ATTACK_POWER: f32 = 1.5;
 const SOLDIER_HEALTH: f32 = 1.5;
 

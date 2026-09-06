@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 
 use crate::game::{
-    building::{Building, BuildingProps, building_type::BuildingType, inhabitants::Inhabitants},
+    building::{
+        self, Building, BuildingProps, building_types::BuildingType, inhabitants::Inhabitants,
+    },
     player::PlayerColor,
     projectiles::projectile_launcher::ProjectileLauncher,
 };
@@ -23,7 +25,7 @@ pub struct TowerProps {
 impl Tower {
     fn scene(props: TowerProps) -> impl Scene {
         let building_props = props.building_props;
-        let image_path = super::asset_paths::get_path(BuildingType::Tower, PlayerColor::Neutral);
+        let image_path = building::asset_paths::get_path(BuildingType::Tower, PlayerColor::Neutral);
 
         bsn! {
             @Building {

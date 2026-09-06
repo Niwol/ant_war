@@ -6,7 +6,7 @@ use bevy::{
 
 use crate::{
     MainCamera,
-    game::building::building_type::BuildingType,
+    game::building::building_types::BuildingType,
     map::{self, Map, MapAccess, MapCollection, MapInfo},
     map_editor::{
         MapEditorState,

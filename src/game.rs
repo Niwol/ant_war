@@ -5,7 +5,7 @@ use crate::{
     game::{
         ant::AntPlugin,
         bot::{Bot, BotPlugin, brain::Brain},
-        building::{BuildingPlugin, SpawnBuilding, building_type::BuildingType},
+        building::{BuildingPlugin, SpawnBuilding, building_types::BuildingType},
         game_info::{GameInfoPlugin, StartGameInfo},
         input::InputPlugin,
         player::{Player, PlayerRef, Team},

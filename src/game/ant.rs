@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::game::{
     InGameEntity,
-    ant::{ant_spawner::AntSpawnerPlugin, ant_type::AntType},
+    ant::{ant_spawner::AntSpawnerPlugin, ant_stats::AntStats, ant_type::AntType},
     building::{Building, inhabitants::Inhabitants},
     game_info::GameState,
     player::PlayerRef,
@@ -62,16 +62,16 @@ impl Ant {
 fn update_ants(
     time: Res<Time>,
     mut commands: Commands,
-    mut ants: Query<(Entity, &AntTarget, &mut Transform), With<Ant>>,
+    mut ants: Query<(Entity, &AntTarget, &mut Transform, &AntStats), With<Ant>>,
     buildings: Query<&Transform, (With<Building>, Without<Ant>)>,
 ) {
-    for (entity, ant_target, mut ant_transform) in &mut ants {
+    for (entity, ant_target, mut ant_transform, ant_stats) in &mut ants {
         let building = buildings.get(ant_target.0).unwrap();
 
         let to_building = building.translation - ant_transform.translation;
         let to_building_norm = to_building.normalize_or_zero();
 
-        ant_transform.translation += to_building_norm * 50.0 * time.delta_secs();
+        ant_transform.translation += to_building_norm * ant_stats.speed * time.delta_secs();
 
         if to_building.length() < 2.0 {
             commands.trigger(EnterBuilding {
