@@ -2,7 +2,8 @@ use bevy::prelude::*;
 
 use crate::game::{
     building::{
-        self, Building, BuildingProps, building_types::BuildingType, inhabitants::Inhabitants,
+        self, Building, BuildingProps, building_stats::BuildingStats, building_types::BuildingType,
+        inhabitants::Inhabitants,
     },
     player::PlayerColor,
 };
@@ -32,6 +33,10 @@ impl Casern {
             }
 
             Inhabitants::new(5, 20, Some(Timer::from_seconds(5.0, TimerMode::Repeating)))
+
+            BuildingStats {
+                defense: 1.0,
+            }
 
             Sprite {
                 image: image_path

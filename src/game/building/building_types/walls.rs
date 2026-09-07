@@ -3,7 +3,8 @@ use bevy::prelude::*;
 use crate::{
     game::{
         building::{
-            self, Building, BuildingProps, building_types::BuildingType, inhabitants::Inhabitants,
+            self, Building, BuildingProps, building_stats::BuildingStats,
+            building_types::BuildingType, inhabitants::Inhabitants,
         },
         player::PlayerColor,
         projectiles::projectile_launcher::ProjectileLauncher,
@@ -40,6 +41,10 @@ impl Walls {
             Inhabitants::new(5, 50, None)
 
             ProjectileLauncher::new(WALLS_RANGE, WALLS_RELOAD_TIME)
+
+            BuildingStats {
+                defense: 1.5,
+            }
 
             Sprite {
                 image: image_path

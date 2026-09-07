@@ -2,7 +2,8 @@ use bevy::prelude::*;
 
 use crate::game::{
     building::{
-        self, Building, BuildingProps, building_types::BuildingType, inhabitants::Inhabitants,
+        self, Building, BuildingProps, building_stats::BuildingStats, building_types::BuildingType,
+        inhabitants::Inhabitants,
     },
     player::PlayerColor,
     projectiles::projectile_launcher::ProjectileLauncher,
@@ -35,6 +36,10 @@ impl Tower {
             }
 
             Inhabitants::new(5, 30, None)
+
+            BuildingStats {
+                defense: 1.0,
+            }
 
             Sprite {
                 image: image_path

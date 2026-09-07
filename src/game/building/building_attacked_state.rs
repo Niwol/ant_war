@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::game::{
     ant::ant_stats::AntStats,
-    building::{EnterBuilding, inhabitants::Inhabitants},
+    building::{EnterBuilding, building_stats::BuildingStats, inhabitants::Inhabitants},
     player::PlayerRef,
 };
 
@@ -47,11 +47,12 @@ fn on_ant_enters(
         Entity,
         &mut BuildingAttackedState,
         &mut Inhabitants,
+        &BuildingStats,
         Option<&PlayerRef>,
     )>,
     ants: Query<(Entity, &AntStats, &PlayerRef)>,
 ) {
-    let (building_entity, mut attack_state, mut inhabitants, building_player_ref) =
+    let (building_entity, mut attack_state, mut inhabitants, building_stats, building_player_ref) =
         buildings.get_mut(enter_event.building).unwrap();
     let (ant_entity, ant_stats, ant_player_ref) = ants.get(enter_event.ant).unwrap();
 
@@ -64,7 +65,9 @@ fn on_ant_enters(
         return;
     }
 
-    let damage = ant_stats.attack_power;
+    let damage = ant_stats.attack_power / building_stats.defense;
+
+    println!("Damage: {damage}");
 
     attack_state.damage_taken += damage;
     attack_state.since_last_attack.reset();
