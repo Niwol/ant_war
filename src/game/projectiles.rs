@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
-use crate::game::projectiles::projectile_launcher::ProjectileLauncherPlugin;
+use crate::game::{
+    ant::ant_stats::AntStats, projectiles::projectile_launcher::ProjectileLauncherPlugin,
+};
 
 pub mod projectile_launcher;
 
@@ -43,25 +45,25 @@ fn update_projectiles(
     mut commands: Commands,
     time: Res<Time>,
     mut projectiles: Query<(Entity, &mut Transform, &Projectile)>,
-    entities: Query<&Transform, Without<Projectile>>,
+    mut ants: Query<(&Transform, &mut AntStats), Without<Projectile>>,
 ) {
-    for (entity, mut transform, projectile) in &mut projectiles {
+    for (projectile_entity, mut transform, projectile) in &mut projectiles {
         let target = projectile.target;
 
-        match entities.get(target) {
-            Ok(target_transform) => {
+        match ants.get_mut(target) {
+            Ok((target_transform, mut ant_stats)) => {
                 let to_target = target_transform.translation - transform.translation;
                 let to_target_norm = to_target.normalize();
 
                 if to_target.length() < 2.0 {
-                    commands.entity(target).despawn();
-                    commands.entity(entity).despawn();
+                    ant_stats.health.current -= 1.0;
+                    commands.entity(projectile_entity).despawn();
                 } else {
                     transform.translation += to_target_norm * PROJECTILE_SPEED * time.delta_secs();
                 }
             }
             Err(_) => {
-                commands.entity(entity).despawn();
+                commands.entity(projectile_entity).despawn();
             }
         }
     }

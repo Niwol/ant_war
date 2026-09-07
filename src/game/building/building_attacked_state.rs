@@ -65,9 +65,9 @@ fn on_ant_enters(
         return;
     }
 
+    let health = ant_stats.health;
     let damage = ant_stats.attack_power / building_stats.defense;
-
-    println!("Damage: {damage}");
+    let damage = damage * (health.current / health.max);
 
     attack_state.damage_taken += damage;
     attack_state.since_last_attack.reset();

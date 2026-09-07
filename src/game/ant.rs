@@ -24,6 +24,7 @@ impl Plugin for AntPlugin {
             FixedUpdate,
             update_ants.run_if(in_state(GameState::Playing { paused: false })),
         );
+        app.add_systems(Update, despawn_dead_ants);
     }
 }
 
@@ -69,6 +70,14 @@ fn update_ants(
                 ant: entity,
                 building: ant_target.0,
             });
+        }
+    }
+}
+
+fn despawn_dead_ants(mut commands: Commands, ants: Query<(Entity, &AntStats), Changed<AntStats>>) {
+    for (ant_entity, ant_stats) in &ants {
+        if ant_stats.health.is_dead() {
+            commands.entity(ant_entity).despawn();
         }
     }
 }

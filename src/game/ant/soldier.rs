@@ -1,7 +1,11 @@
 use bevy::prelude::*;
 
 use crate::game::{
-    ant::{self, Ant, AntProps, ant_stats::AntStats, ant_type::AntType},
+    ant::{
+        self, Ant, AntProps,
+        ant_stats::{AntStats, Health},
+        ant_type::AntType,
+    },
     player::PlayerColor,
 };
 
@@ -38,7 +42,10 @@ impl Soldier {
             AntStats {
                 speed: SOLDIER_SPEED,
                 attack_power: SOLDIER_ATTACK_POWER,
-                health: SOLDIER_HEALTH,
+                health: Health {
+                    max: SOLDIER_HEALTH,
+                    current: SOLDIER_HEALTH,
+                },
             }
         }
     }
