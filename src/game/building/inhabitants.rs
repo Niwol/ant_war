@@ -2,22 +2,25 @@ use bevy::prelude::*;
 
 use crate::game::{building::Building, game_info::GameState, player::PlayerRef};
 
-pub fn plugin(app: &mut App) {
-    app.add_systems(
-        FixedUpdate,
-        (update_inhabitants_text_position, update_inhabitants_text),
-    );
-    app.add_systems(
-        Update,
-        grow_inhabitants.run_if(in_state(GameState::Playing { paused: false })),
-    );
+pub struct InhabitantsPlugin;
+impl Plugin for InhabitantsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(
+            FixedUpdate,
+            (update_inhabitants_text_position, update_inhabitants_text),
+        );
+        app.add_systems(
+            Update,
+            grow_inhabitants.run_if(in_state(GameState::Playing { paused: false })),
+        );
 
-    app.add_systems(
-        Update,
-        shrink_inhabitants.run_if(in_state(GameState::Playing { paused: false })),
-    );
+        app.add_systems(
+            Update,
+            shrink_inhabitants.run_if(in_state(GameState::Playing { paused: false })),
+        );
 
-    app.add_observer(on_add_inhabitants);
+        app.add_observer(on_add_inhabitants);
+    }
 }
 
 #[derive(Component, Default, Clone)]

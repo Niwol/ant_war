@@ -3,9 +3,8 @@ use bevy::prelude::*;
 use crate::game::{
     InGameEntity,
     ant::{ant_spawner::AntSpawnerPlugin, ant_stats::AntStats, ant_type::AntType},
-    building::{Building, inhabitants::Inhabitants},
+    building::{Building, EnterBuilding},
     game_info::GameState,
-    player::PlayerRef,
 };
 
 pub mod ant_spawner;
@@ -28,13 +27,6 @@ impl Plugin for AntPlugin {
     }
 }
 
-#[derive(EntityEvent)]
-struct EnterBuilding {
-    #[event_target]
-    ant: Entity,
-    building: Entity,
-}
-
 #[derive(Component, Clone, FromTemplate)]
 pub struct AntTarget(pub Entity);
 
@@ -54,7 +46,6 @@ impl Ant {
     fn scene(props: AntProps) -> impl Scene {
         bsn! {
             Transform::from_xyz(props.position.x, props.position.y, 0.0)
-            on(enter_building)
         }
     }
 }
@@ -80,38 +71,4 @@ fn update_ants(
             });
         }
     }
-}
-
-fn enter_building(
-    enter_event: On<EnterBuilding>,
-    mut commands: Commands,
-    ants: Query<&PlayerRef, (With<Ant>, Without<Building>)>,
-    mut buildings: Query<(Option<&mut PlayerRef>, &mut Inhabitants), With<Building>>,
-) {
-    let (building_player_ref, mut inhabitants) = buildings.get_mut(enter_event.building).unwrap();
-    let ant_player_ref = ants.get(enter_event.ant).unwrap();
-
-    if let Some(mut building_player_ref) = building_player_ref {
-        if *building_player_ref == *ant_player_ref {
-            inhabitants.add(1);
-        } else {
-            if inhabitants.current() == 0 {
-                *building_player_ref = *ant_player_ref;
-                inhabitants.add(1);
-            } else {
-                inhabitants.take(1);
-            }
-        }
-    } else {
-        if inhabitants.current() == 0 {
-            commands
-                .entity(enter_event.building)
-                .insert(*ant_player_ref);
-            inhabitants.add(1);
-        } else {
-            inhabitants.take(1);
-        }
-    }
-
-    commands.entity(enter_event.ant).despawn();
 }

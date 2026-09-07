@@ -8,14 +8,13 @@ use crate::{
         bot::Bot,
         building::{
             asset_paths::*,
+            building_attacked_state::{BuildingAttackedState, BuildingAttackedStatePlugin},
             building_selection::{BuildingSelectionPlugin, SelectedBuildings},
-            building_types::BuildingType,
-            building_types::casern::Casern,
-            building_types::house::House,
-            building_types::main_building::MainBuilding,
-            building_types::tower::Tower,
-            building_types::walls::Walls,
-            inhabitants::Inhabitants,
+            building_types::{
+                BuildingType, BuildingTypesPlugin, casern::Casern, house::House,
+                main_building::MainBuilding, tower::Tower, walls::Walls,
+            },
+            inhabitants::{Inhabitants, InhabitantsPlugin},
         },
         input::{self, InputMoveOrder},
         player::{Player, PlayerColor, PlayerRef},
@@ -24,7 +23,9 @@ use crate::{
 };
 
 pub mod asset_paths;
+pub mod building_attacked_state;
 pub mod building_selection;
+pub mod building_stats;
 pub mod building_types;
 pub mod inhabitants;
 
@@ -32,12 +33,9 @@ pub struct BuildingPlugin;
 impl Plugin for BuildingPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            building_types::main_building::plugin,
-            building_types::house::plugin,
-            building_types::tower::plugin,
-            building_types::casern::plugin,
-            building_types::walls::plugin,
-            inhabitants::plugin,
+            BuildingTypesPlugin,
+            BuildingAttackedStatePlugin,
+            InhabitantsPlugin,
             BuildingSelectionPlugin,
         ));
 
@@ -144,12 +142,19 @@ fn load_building_sprites(mut commands: Commands, assets: Res<AssetServer>) {
 
 #[derive(EntityEvent)]
 pub struct MoveOrder {
-    pub entity: Entity,
+    #[event_target]
+    pub building: Entity,
     pub target: Entity,
 }
 
+#[derive(Event)]
+pub struct EnterBuilding {
+    pub building: Entity,
+    pub ant: Entity,
+}
+
 #[derive(SceneComponent, Default, Clone)]
-#[require(Pickable, Sprite, InGameEntity)]
+#[require(Pickable, Sprite, InGameEntity, BuildingAttackedState)]
 #[scene(BuildingProps)]
 pub struct Building {
     building_type: BuildingType,
@@ -252,7 +257,7 @@ fn on_move_order(
     mut buildings: Query<(&Building, &mut Inhabitants, &PlayerRef, &Transform)>,
 ) {
     let (building, mut inhabitants, player_ref, transform) =
-        buildings.get_mut(order.entity).unwrap();
+        buildings.get_mut(order.building).unwrap();
 
     let to_move = inhabitants.current() / 2 + inhabitants.current() % 2;
     if to_move == 0 {
@@ -306,7 +311,7 @@ fn on_input_move_order(
         if let Ok(player_ref) = buildings.get(*selected_building) {
             if players.contains(player_ref.0) {
                 commands.trigger(MoveOrder {
-                    entity: *selected_building,
+                    building: *selected_building,
                     target: order.target,
                 });
             }

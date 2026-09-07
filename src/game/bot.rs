@@ -47,7 +47,7 @@ fn bot_actions(mut commands: Commands, bots: Query<(&Bot, &BotView)>) {
                 target_building,
             } => {
                 commands.trigger(MoveOrder {
-                    entity: source_building,
+                    building: source_building,
                     target: target_building,
                 });
             }

@@ -9,6 +9,19 @@ pub mod main_building;
 pub mod tower;
 pub mod walls;
 
+pub struct BuildingTypesPlugin;
+impl Plugin for BuildingTypesPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugins((
+            main_building::plugin,
+            house::plugin,
+            tower::plugin,
+            casern::plugin,
+            walls::plugin,
+        ));
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 pub enum BuildingType {
     #[default]
