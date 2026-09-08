@@ -1,19 +1,45 @@
-use bevy::ecs::entity::Entity;
+use std::time::Duration;
+
+use bevy::prelude::*;
 
 use crate::{game::bot::bot_view::BotView, world_grid::CELL_SIZE};
 
 #[derive(Clone)]
-pub struct Brain {}
+pub struct Brain {
+    action_timer: Timer,
+}
 
 impl Default for Brain {
     fn default() -> Self {
-        Self::simple()
+        Self::eazy()
     }
 }
 
 impl Brain {
-    pub fn simple() -> Self {
-        Self {}
+    pub fn eazy() -> Self {
+        Self {
+            action_timer: Timer::from_seconds(5.0, TimerMode::Once),
+        }
+    }
+
+    pub fn normal() -> Self {
+        Self {
+            action_timer: Timer::from_seconds(3.0, TimerMode::Once),
+        }
+    }
+
+    pub fn hard() -> Self {
+        Self {
+            action_timer: Timer::from_seconds(1.0, TimerMode::Once),
+        }
+    }
+
+    pub fn tick_action_timer(&mut self, delta: Duration) {
+        self.action_timer.tick(delta);
+    }
+
+    pub fn reset_action_timer(&mut self) {
+        self.action_timer.reset();
     }
 
     pub fn take_action(&self, bot_view: &BotView) -> BotAction {
@@ -32,6 +58,7 @@ impl Brain {
                 score += self.dist_score(dist);
                 score += self.pop_score(bot_building.inhabitants, bot_building.max_inhabitants);
                 score += self.pop_diff_score(bot_building.inhabitants, enemy_building.inhabitants);
+                score += self.timer_score();
 
                 if score > action_score {
                     bot_action = action;
@@ -39,8 +66,6 @@ impl Brain {
                 }
             }
         }
-
-        // println!("{:?} -> {}", bot_action, action_score);
 
         bot_action
     }
@@ -70,6 +95,12 @@ impl Brain {
         } else {
             pop_diff * 5.0
         }
+    }
+
+    fn timer_score(&self) -> f32 {
+        let remaining = self.action_timer.remaining_secs();
+
+        -remaining * 50.0
     }
 }
 

@@ -4,7 +4,7 @@ use crate::{
     AppState, MainCamera,
     game::{
         ant::AntPlugin,
-        bot::{Bot, BotPlugin, brain::Brain},
+        bot::{Bot, BotPlugin},
         building::{BuildingPlugin, SpawnBuilding, building_types::BuildingType},
         game_info::{GameInfoPlugin, StartGameInfo},
         input::InputPlugin,
@@ -108,11 +108,7 @@ fn spawn_map(
     let mut player_refs = HashMap::new();
 
     for player_info in spawn_map.game_preparation_info.player_infos() {
-        let bot = if player_info.bot {
-            Some(Bot::new(Brain::simple()))
-        } else {
-            None
-        };
+        let bot = player_info.bot.map(Bot::from_difficulty);
 
         let player_entity = commands
             .spawn_scene(bsn! {

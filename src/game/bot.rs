@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::game::{
     bot::{
         bot_view::{BotView, BotViewPlugin},
-        brain::Brain,
+        brain::{BotAction, Brain},
     },
     building::MoveOrder,
     game_info::GameState,
@@ -16,7 +16,9 @@ impl Plugin for BotPlugin {
 
         app.add_systems(
             Update,
-            bot_actions.run_if(in_state(GameState::Playing { paused: false })),
+            (tick_brain_timers, bot_actions)
+                .chain()
+                .run_if(in_state(GameState::Playing { paused: false })),
         );
     }
 }
@@ -31,14 +33,52 @@ pub struct Bot {
 }
 
 impl Bot {
-    pub fn new(brain: Brain) -> Self {
+    pub fn _new(brain: Brain) -> Self {
+        Self { brain }
+    }
+
+    pub fn from_difficulty(bot_difficulty: BotDifficulty) -> Self {
+        let brain = match bot_difficulty {
+            BotDifficulty::Eazy => Brain::eazy(),
+            BotDifficulty::Normal => Brain::normal(),
+            BotDifficulty::Hard => Brain::hard(),
+        };
+
         Self { brain }
     }
 }
 
-fn bot_actions(mut commands: Commands, bots: Query<(&Bot, &BotView)>) {
-    for (bot, bot_view) in &bots {
+#[derive(PartialEq, Eq, Clone, Copy)]
+pub enum BotDifficulty {
+    Eazy,
+    Normal,
+    Hard,
+}
+
+impl ToString for BotDifficulty {
+    fn to_string(&self) -> String {
+        match self {
+            BotDifficulty::Eazy => "Eazy",
+            BotDifficulty::Normal => "Normal",
+            BotDifficulty::Hard => "Hard",
+        }
+        .to_string()
+    }
+}
+
+fn tick_brain_timers(time: Res<Time>, mut bots: Query<&mut Bot>) {
+    for mut bot in &mut bots {
+        bot.brain.tick_action_timer(time.delta());
+    }
+}
+
+fn bot_actions(mut commands: Commands, mut bots: Query<(&mut Bot, &BotView)>) {
+    for (mut bot, bot_view) in &mut bots {
         let bot_action = bot.brain.take_action(bot_view);
+
+        if let BotAction::None = bot_action {
+            bot.brain.reset_action_timer();
+        }
 
         match bot_action {
             brain::BotAction::None => (),

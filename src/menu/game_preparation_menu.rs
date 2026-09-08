@@ -320,7 +320,11 @@ fn player_element(player_id: usize, player_info: PlayerInfo) -> Box<dyn Scene> {
             @FeathersButton {
                 @caption: bsn! {
                     #ButtonText
-                    Text::new(format!("{}", if player_info.bot {"Bot"} else {"Player"}))
+                    Text::new(format!( "{}", match player_info.bot {
+                            Some(bot_difficulty) => bot_difficulty.to_string(),
+                            None => "Player".to_string(),
+                        })
+                    )
                     ThemedText
                 }
             }

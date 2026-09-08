@@ -5,6 +5,7 @@ use bevy::{
 use crate::{
     game::{
         StartGame,
+        bot::BotDifficulty,
         building::{self, building_types::BuildingType},
         player::{PLAYER_COLOR_LIST, PlayerColor},
     },
@@ -63,7 +64,7 @@ pub struct SelectedMap {
 pub struct PlayerInfo {
     pub player_id: usize,
     pub player_color: PlayerColor,
-    pub bot: bool,
+    pub bot: Option<BotDifficulty>,
 }
 
 #[derive(Resource, Clone)]
@@ -137,7 +138,11 @@ fn loading_map(
                     PlayerInfo {
                         player_id,
                         player_color: PlayerColor::from(PLAYER_COLOR_LIST[player_id - 1]),
-                        bot: player_id != 1,
+                        bot: if player_id == 1 {
+                            None
+                        } else {
+                            Some(BotDifficulty::Eazy)
+                        },
                     },
                 )
             })
@@ -236,14 +241,21 @@ pub(super) fn on_bot_button_clicked(
 
     let player_id = player_ids.get(child_of.0).unwrap();
     let player_info = game_preparation_info.players.get_mut(&player_id.0).unwrap();
-    player_info.bot = !player_info.bot;
+    player_info.bot = match player_info.bot {
+        Some(bot_difficulty) => match bot_difficulty {
+            BotDifficulty::Eazy => Some(BotDifficulty::Normal),
+            BotDifficulty::Normal => Some(BotDifficulty::Hard),
+            BotDifficulty::Hard => None,
+        },
+        None => Some(BotDifficulty::Eazy),
+    };
 
     let mut text = texts.get_mut(button_text_ref.entity).unwrap();
 
-    match player_info.bot {
-        true => text.0 = "Bot".to_string(),
-        false => text.0 = "Player".to_string(),
-    }
+    text.0 = match player_info.bot {
+        Some(bot_difficulty) => bot_difficulty.to_string(),
+        None => "Player".to_string(),
+    };
 }
 
 pub(super) fn on_building_assignement_button_clicked(
