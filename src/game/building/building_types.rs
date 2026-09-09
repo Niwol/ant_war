@@ -22,7 +22,7 @@ impl Plugin for BuildingTypesPlugin {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 pub enum BuildingType {
     #[default]
     House,

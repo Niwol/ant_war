@@ -76,8 +76,9 @@ fn bot_actions(mut commands: Commands, mut bots: Query<(&mut Bot, &BotView)>) {
     for (mut bot, bot_view) in &mut bots {
         let bot_action = bot.brain.take_action(bot_view);
 
-        if let BotAction::None = bot_action {
-            bot.brain.reset_action_timer();
+        match bot_action {
+            BotAction::None => (),
+            _ => bot.brain.reset_action_timer(),
         }
 
         match bot_action {

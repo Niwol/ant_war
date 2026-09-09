@@ -177,6 +177,10 @@ impl Building {
             on(on_move_order)
         }
     }
+
+    pub fn building_type(&self) -> BuildingType {
+        self.building_type
+    }
 }
 
 #[derive(Component, Serialize, Deserialize, Default, Clone, Copy, Hash, PartialEq, Eq)]
