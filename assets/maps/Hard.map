@@ -1,0 +1,166 @@
+(
+    map_name: "Hard",
+    map_size: (60, 60),
+    max_players: 2,
+    building_infos: {(20): (
+        building_type: Tower,
+        grid_transform: (
+            size: (2, 2),
+            bottom_left_coord: ((51, 46)),
+        ),
+    ), (14): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((45, 44)),
+        ),
+    ), (23): (
+        building_type: Casern,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((52, 36)),
+        ),
+    ), (7): (
+        building_type: Walls,
+        grid_transform: (
+            size: (5, 5),
+            bottom_left_coord: ((37, 32)),
+        ),
+    ), (9): (
+        building_type: Tower,
+        grid_transform: (
+            size: (2, 2),
+            bottom_left_coord: ((29, 47)),
+        ),
+    ), (6): (
+        building_type: Walls,
+        grid_transform: (
+            size: (5, 5),
+            bottom_left_coord: ((26, 40)),
+        ),
+    ), (1): (
+        building_type: HeadQuarter(
+            index: 2,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((54, 54)),
+        ),
+    ), (12): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((36, 55)),
+        ),
+    ), (15): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((54, 41)),
+        ),
+    ), (8): (
+        building_type: Walls,
+        grid_transform: (
+            size: (5, 5),
+            bottom_left_coord: ((51, 28)),
+        ),
+    ), (13): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((39, 49)),
+        ),
+    ), (11): (
+        building_type: Tower,
+        grid_transform: (
+            size: (2, 2),
+            bottom_left_coord: ((46, 34)),
+        ),
+    ), (17): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((48, 50)),
+        ),
+    ), (10): (
+        building_type: Tower,
+        grid_transform: (
+            size: (2, 2),
+            bottom_left_coord: ((34, 39)),
+        ),
+    ), (16): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((45, 55)),
+        ),
+    ), (3): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((11, 11)),
+        ),
+    ), (0): (
+        building_type: HeadQuarter(
+            index: 1,
+        ),
+        grid_transform: (
+            size: (4, 4),
+            bottom_left_coord: ((2, 2)),
+        ),
+    ), (19): (
+        building_type: Tower,
+        grid_transform: (
+            size: (2, 2),
+            bottom_left_coord: ((44, 52)),
+        ),
+    ), (24): (
+        building_type: Casern,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((7, 17)),
+        ),
+    ), (25): (
+        building_type: Casern,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((17, 6)),
+        ),
+    ), (4): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((11, 2)),
+        ),
+    ), (18): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((55, 48)),
+        ),
+    ), (21): (
+        building_type: Casern,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((31, 51)),
+        ),
+    ), (22): (
+        building_type: Casern,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((38, 42)),
+        ),
+    ), (5): (
+        building_type: Walls,
+        grid_transform: (
+            size: (5, 5),
+            bottom_left_coord: ((23, 51)),
+        ),
+    ), (2): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((2, 11)),
+        ),
+    )},
+)

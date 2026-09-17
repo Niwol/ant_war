@@ -1,17 +1,13 @@
 use bevy::prelude::*;
 
 use crate::game::{
-    ant::{
-        self, Ant, AntProps,
-        ant_stats::{AntStats, Health},
-        ant_type::AntType,
-    },
+    ant::{self, Ant, AntProps, ant_type::AntType},
     player::PlayerColor,
 };
 
-const SOLDIER_SPEED: f32 = 40.0;
-const SOLDIER_ATTACK_POWER: f32 = 1.5;
-const SOLDIER_HEALTH: f32 = 1.5;
+pub const SOLDIER_SPEED: f32 = 40.0;
+pub const SOLDIER_ATTACK_POWER: f32 = 1.5;
+pub const SOLDIER_HEALTH: f32 = 1.5;
 
 #[derive(SceneComponent, Default, Clone)]
 #[scene(SoldierProps)]
@@ -39,14 +35,7 @@ impl Soldier {
                 image: image_path
             }
 
-            AntStats {
-                speed: SOLDIER_SPEED,
-                attack_power: SOLDIER_ATTACK_POWER,
-                health: Health {
-                    max: SOLDIER_HEALTH,
-                    current: SOLDIER_HEALTH,
-                },
-            }
+            template_value(AntType::Soldier.base_stats())
         }
     }
 }

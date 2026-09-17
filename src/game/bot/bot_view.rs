@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use crate::{
     game::{
+        bot::building_safety::BuildingSafety,
         building::{Building, building_types::BuildingType, inhabitants::Inhabitants},
         game_info::GameState,
         player::PlayerRef,
@@ -38,6 +39,7 @@ fn fill_bot_view(
         Entity,
         &Building,
         Option<&PlayerRef>,
+        &BuildingSafety,
         &Inhabitants,
         &GridTransform,
     )>,
@@ -46,22 +48,32 @@ fn fill_bot_view(
         bot_view.clear();
 
         for building in &buildigns {
-            let (building_entity, building, player_ref, inhabitants, grid_transform) = building;
+            let (
+                building_entity,
+                building,
+                player_ref,
+                building_safety,
+                inhabitants,
+                grid_transform,
+            ) = building;
 
-            let own = if let Some(player_ref) = player_ref
-                && player_ref.0 == player_entity
-            {
-                true
-            } else {
-                false
+            let owner = match player_ref {
+                Some(player_ref) => {
+                    if player_ref.0 == player_entity {
+                        BuildingOwner::Own
+                    } else {
+                        BuildingOwner::Enemy
+                    }
+                }
+                None => BuildingOwner::Neutral,
             };
 
             let building_view = BuildingView {
                 entity: building_entity,
-                own,
+                owner,
                 building_type: building.building_type(),
+                building_safety: *building_safety,
                 inhabitants: inhabitants.current(),
-                max_inhabitants: inhabitants.max_inhabitants(),
                 world_pos: grid_transform.center_in_world(),
             };
 
@@ -79,9 +91,16 @@ fn fill_bot_view(
 #[derive(Debug, Clone)]
 pub struct BuildingView {
     pub entity: Entity,
-    pub own: bool,
     pub building_type: BuildingType,
+    pub owner: BuildingOwner,
+    pub building_safety: BuildingSafety,
     pub inhabitants: i32,
-    pub max_inhabitants: i32,
     pub world_pos: Vec2,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BuildingOwner {
+    Own,
+    Enemy,
+    Neutral,
 }

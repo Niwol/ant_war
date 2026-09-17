@@ -105,6 +105,10 @@ fn draw_launcher_ranges(
     for (launcher, grid_transform) in &launchers {
         let center = grid_transform.center_in_world();
 
-        gizmos.circle_2d(center, launcher.range, Color::WHITE);
+        gizmos.circle_2d(
+            center,
+            launcher.range,
+            Color::linear_rgba(1.00, 1.00, 1.00, 0.2),
+        );
     }
 }

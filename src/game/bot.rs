@@ -4,15 +4,20 @@ use crate::game::{
     bot::{
         bot_view::{BotView, BotViewPlugin},
         brain::{BotAction, Brain},
+        building_safety::BuildingSafetyPlugin,
     },
     building::MoveOrder,
     game_info::GameState,
 };
 
+pub mod bot_view;
+pub mod brain;
+pub mod building_safety;
+
 pub struct BotPlugin;
 impl Plugin for BotPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(BotViewPlugin);
+        app.add_plugins((BuildingSafetyPlugin, BotViewPlugin));
 
         app.add_systems(
             Update,
@@ -22,9 +27,6 @@ impl Plugin for BotPlugin {
         );
     }
 }
-
-pub mod bot_view;
-pub mod brain;
 
 #[derive(Component, Default, Clone)]
 #[require(BotView)]
@@ -74,14 +76,14 @@ fn tick_brain_timers(time: Res<Time>, mut bots: Query<&mut Bot>) {
 
 fn bot_actions(mut commands: Commands, mut bots: Query<(&mut Bot, &BotView)>) {
     for (mut bot, bot_view) in &mut bots {
-        let bot_action = bot.brain.take_action(bot_view);
+        let scores = bot.brain.take_action(bot_view);
 
-        match bot_action {
+        match scores.action {
             BotAction::None => (),
             _ => bot.brain.reset_action_timer(),
         }
 
-        match bot_action {
+        match scores.action {
             brain::BotAction::None => (),
             brain::BotAction::MoveOrder {
                 source_building,

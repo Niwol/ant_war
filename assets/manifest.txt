@@ -4,6 +4,7 @@ manifest.txt
 maps/Challenge 1.map
 maps/Challenge 2.map
 maps/Challenge Hard.map
+maps/Hard.map
 maps/Map 1.map
 maps/Map 2.map
 maps/Map 3.map

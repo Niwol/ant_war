@@ -2,7 +2,6 @@ use bevy::{ecs::system::SystemParam, feathers::FeathersPlugins, prelude::*};
 
 use crate::{
     cursor::CursorPlugin,
-    debug::DebugPlugin,
     game::GamePlugin,
     manifest::{ManifestLoadingState, ManifestPlugin},
     map::{MapLoadingState, MapPlugin},
@@ -13,7 +12,6 @@ use crate::{
 };
 
 mod cursor;
-mod debug;
 mod game;
 mod manifest;
 mod map;
@@ -30,7 +28,6 @@ impl Plugin for AntWarPlugin {
 
         // Crate plugins
         app.add_plugins((
-            DebugPlugin,
             ManifestPlugin,
             MapPlugin,
             CursorPlugin,

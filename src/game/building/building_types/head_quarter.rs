@@ -7,23 +7,26 @@ use crate::game::{
     player::PlayerColor,
 };
 
-pub const HOUSE_MAX_INHABITANTS: i32 = 20;
+pub const HQ_MAX_INHABITANTS: i32 = 40;
 
 pub fn plugin(_app: &mut App) {}
 
 #[derive(SceneComponent, Default, Clone)]
-#[scene(HouseProps)]
-pub struct House;
+#[scene(HeadQuarterProps)]
+pub struct HeadQuarter;
 
 #[derive(Default)]
-pub struct HouseProps {
+pub struct HeadQuarterProps {
     pub building_props: BuildingProps,
+    pub main_building_index: usize,
 }
 
-impl House {
-    fn scene(props: HouseProps) -> impl Scene {
+impl HeadQuarter {
+    fn scene(props: HeadQuarterProps) -> impl Scene {
         let building_props = props.building_props;
-        let building_type = BuildingType::House;
+        let building_type = BuildingType::HeadQuarter {
+            index: props.main_building_index,
+        };
         let image_path = building::asset_paths::get_path(building_type, PlayerColor::Neutral);
 
         bsn! {
@@ -33,7 +36,7 @@ impl House {
                 @grid_transform: {building_props.grid_transform}
             }
 
-            Inhabitants::new(5, HOUSE_MAX_INHABITANTS, Some(Timer::from_seconds(2.0, TimerMode::Repeating)))
+            Inhabitants::new(5, HQ_MAX_INHABITANTS, Some(Timer::from_seconds(1.0, TimerMode::Repeating)))
             template_value(building_type.base_stats())
 
             Sprite {
@@ -43,10 +46,10 @@ impl House {
     }
 
     pub const fn _max_inhabitants() -> i32 {
-        HOUSE_MAX_INHABITANTS
+        HQ_MAX_INHABITANTS
     }
 
     pub const fn inhabitants_percentage(current: i32) -> f32 {
-        current as f32 / HOUSE_MAX_INHABITANTS as f32
+        current as f32 / HQ_MAX_INHABITANTS as f32
     }
 }

@@ -1,11 +1,19 @@
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::game::ant::ant_type::AntType;
+use crate::game::{
+    ant::ant_type::AntType,
+    building::{
+        building_stats::BuildingStats,
+        building_types::{
+            casern::Casern, head_quarter::HeadQuarter, house::House, tower::Tower, walls::Walls,
+        },
+    },
+};
 
 pub mod casern;
+pub mod head_quarter;
 pub mod house;
-pub mod main_building;
 pub mod tower;
 pub mod walls;
 
@@ -13,7 +21,7 @@ pub struct BuildingTypesPlugin;
 impl Plugin for BuildingTypesPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            main_building::plugin,
+            head_quarter::plugin,
             house::plugin,
             tower::plugin,
             casern::plugin,
@@ -63,6 +71,36 @@ impl BuildingType {
             BuildingType::Tower => AntType::Unit,
             BuildingType::Casern => AntType::Soldier,
             BuildingType::Walls => AntType::Unit,
+        }
+    }
+
+    pub const fn _max_inhabitants(&self) -> i32 {
+        match self {
+            BuildingType::House => House::_max_inhabitants(),
+            BuildingType::HeadQuarter { index: _ } => HeadQuarter::_max_inhabitants(),
+            BuildingType::Tower => Tower::_max_inhabitants(),
+            BuildingType::Casern => Casern::_max_inhabitants(),
+            BuildingType::Walls => Walls::_max_inhabitants(),
+        }
+    }
+
+    pub const fn inhabitants_percentage(&self, current: i32) -> f32 {
+        match self {
+            BuildingType::House => House::inhabitants_percentage(current),
+            BuildingType::HeadQuarter { index: _ } => HeadQuarter::inhabitants_percentage(current),
+            BuildingType::Tower => Tower::inhabitants_percentage(current),
+            BuildingType::Casern => Casern::inhabitants_percentage(current),
+            BuildingType::Walls => Walls::inhabitants_percentage(current),
+        }
+    }
+
+    pub const fn base_stats(&self) -> BuildingStats {
+        match self {
+            BuildingType::House => BuildingStats { defense: 1.0 },
+            BuildingType::HeadQuarter { .. } => BuildingStats { defense: 1.0 },
+            BuildingType::Tower => BuildingStats { defense: 1.0 },
+            BuildingType::Casern => BuildingStats { defense: 1.0 },
+            BuildingType::Walls => BuildingStats { defense: 1.5 },
         }
     }
 }

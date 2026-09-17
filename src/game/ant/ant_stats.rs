@@ -17,4 +17,8 @@ impl Health {
     pub fn is_dead(&self) -> bool {
         self.current <= 0.0
     }
+
+    pub fn percent(&self) -> f32 {
+        self.max / self.current
+    }
 }

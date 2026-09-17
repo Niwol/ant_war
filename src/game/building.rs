@@ -11,8 +11,8 @@ use crate::{
             building_attacked_state::{BuildingAttackedState, BuildingAttackedStatePlugin},
             building_selection::{BuildingSelectionPlugin, SelectedBuildings},
             building_types::{
-                BuildingType, BuildingTypesPlugin, casern::Casern, house::House,
-                main_building::MainBuilding, tower::Tower, walls::Walls,
+                BuildingType, BuildingTypesPlugin, casern::Casern, head_quarter::HeadQuarter,
+                house::House, tower::Tower, walls::Walls,
             },
             inhabitants::{Inhabitants, InhabitantsPlugin},
         },
@@ -199,7 +199,7 @@ impl BuildingId {
 #[derive(QueryData)]
 pub struct BuildingTypeQueryData {
     pub house: Option<&'static House>,
-    pub main_building: Option<&'static MainBuilding>,
+    pub main_building: Option<&'static HeadQuarter>,
 }
 
 #[derive(Event)]
@@ -225,7 +225,7 @@ fn spawn_building(spawn: On<SpawnBuilding>, mut commands: Commands) {
         }
         BuildingType::HeadQuarter { index } => {
             commands.spawn_scene(bsn! {
-                @MainBuilding {
+                @HeadQuarter {
                     @building_props,
                     @main_building_index: index,
                 }

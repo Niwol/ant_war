@@ -53,7 +53,7 @@ impl Inhabitants {
         self.current
     }
 
-    pub fn max_inhabitants(&self) -> i32 {
+    pub fn _max_inhabitants(&self) -> i32 {
         self.max
     }
 

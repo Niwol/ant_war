@@ -3,7 +3,7 @@ use std::time::Duration;
 use bevy::prelude::*;
 
 use crate::game::{
-    bot::bot_view::{BotView, BuildingView},
+    bot::bot_view::{BotView, BuildingOwner, BuildingView},
     building::building_types::BuildingType,
 };
 
@@ -45,9 +45,8 @@ impl Brain {
         self.action_timer.reset();
     }
 
-    pub fn take_action(&self, bot_view: &BotView) -> BotAction {
-        let mut bot_action = BotAction::None;
-        let mut action_score = 0.0;
+    pub fn take_action(&self, bot_view: &BotView) -> Scores {
+        let mut best_scores = Scores::new(BotAction::None);
 
         for bot_building in &bot_view.bot_buildings {
             for other_building in &bot_view.all_buildings {
@@ -60,108 +59,95 @@ impl Brain {
                     target_building: other_building.entity,
                 };
 
-                let mut score = 0.0;
+                let scores = self.compute_scores(bot_view, action);
 
-                match other_building.own {
-                    true => {
-                        let reinforcement_need = self.building_reinforcement_need(&other_building);
-                        score += self.reinforcement_score(&bot_building, reinforcement_need);
-                    }
-                    false => {
-                        score +=
-                            self.pop_score(bot_building.inhabitants, bot_building.max_inhabitants);
-                        score += self.source_building_attack_score(&bot_building);
-                        score += self
-                            .pop_diff_score(bot_building.inhabitants, other_building.inhabitants);
-
-                        score += self.building_type_score(other_building.building_type);
-                    }
-                }
-                let dist = (bot_building.world_pos - other_building.world_pos).length();
-                score += self.dist_score(dist);
-                score += self.timer_score();
-
-                if score > action_score {
-                    bot_action = action;
-                    action_score = score;
+                if scores.total_score() > best_scores.total_score() {
+                    best_scores = scores;
                 }
             }
         }
 
-        bot_action
+        best_scores
     }
 
-    fn building_reinforcement_need(&self, building_view: &BuildingView) -> f32 {
-        let building_type_need = match building_view.building_type {
-            BuildingType::House => 1.0,
-            BuildingType::HeadQuarter { index: _ } => 0.0,
-            BuildingType::Tower => 10.0,
-            BuildingType::Casern => 5.0,
-            BuildingType::Walls => 15.0,
+    pub fn compute_scores(&self, bot_view: &BotView, bot_action: BotAction) -> Scores {
+        let mut scores = Scores::new(bot_action);
+
+        match bot_action {
+            BotAction::None => return scores,
+            BotAction::MoveOrder {
+                source_building,
+                target_building,
+            } => {
+                let source_building_view = bot_view
+                    .all_buildings
+                    .iter()
+                    .find(|building_view| building_view.entity == source_building)
+                    .unwrap();
+                let target_building_view = bot_view
+                    .all_buildings
+                    .iter()
+                    .find(|building_view| building_view.entity == target_building)
+                    .unwrap();
+
+                let dist =
+                    (source_building_view.world_pos - target_building_view.world_pos).length();
+
+                let ant_base_stats = source_building_view
+                    .building_type
+                    .ants_produced()
+                    .base_stats();
+
+                let ant_speed = ant_base_stats.speed;
+
+                let arriving_time = dist / ant_speed;
+
+                let ants_send =
+                    source_building_view.inhabitants / 2 + source_building_view.inhabitants % 2;
+
+                match target_building_view.owner {
+                    BuildingOwner::Own => {
+                        let target_safety = target_building_view.building_safety;
+                        let incomming_damage = target_safety.incomming_damage();
+
+                        scores.reinforcement_score = incomming_damage * ants_send as f32;
+                    }
+
+                    BuildingOwner::Enemy | BuildingOwner::Neutral => {
+                        let attack_power = ant_base_stats.attack_power * ants_send as f32;
+                        let building_defense =
+                            target_building_view.building_type.base_stats().defense
+                                * target_building_view.inhabitants as f32;
+                        scores.attack_score = attack_power - building_defense;
+                        scores.attack_score += 10.0;
+                    }
+                }
+
+                scores.general_score -= 20.0;
+                scores.general_score += self.building_send_need(&source_building_view);
+                scores.general_score -= arriving_time;
+                scores.general_score += self.timer_score();
+            }
+        }
+
+        scores
+    }
+
+    fn building_send_need(&self, building_view: &BuildingView) -> f32 {
+        let building_target_pop_percentage = match building_view.building_type {
+            BuildingType::House => 0.5,
+            BuildingType::HeadQuarter { .. } => 0.5,
+            BuildingType::Tower => 1.0,
+            BuildingType::Casern => 0.5,
+            BuildingType::Walls => 1.0,
         };
 
-        let fill_need =
-            building_view.max_inhabitants as f32 / (building_view.inhabitants as f32 + 30.0);
+        let pop_percentage = building_view
+            .building_type
+            .inhabitants_percentage(building_view.inhabitants);
 
-        building_type_need * fill_need
-    }
-
-    fn reinforcement_score(&self, source_building: &BuildingView, reinforcement_need: f32) -> f32 {
-        let building_type_score = match source_building.building_type {
-            BuildingType::House => 5.0,
-            BuildingType::HeadQuarter { index: _ } => 10.0,
-            BuildingType::Tower => -20.0,
-            BuildingType::Casern => -10.0,
-            BuildingType::Walls => -5.0,
-        };
-
-        let fill_score =
-            (source_building.inhabitants as f32 / source_building.max_inhabitants as f32) * 10.0;
-
-        (building_type_score + fill_score) * reinforcement_need
-    }
-
-    fn building_type_score(&self, building_type: BuildingType) -> f32 {
-        match building_type {
-            BuildingType::House => 10.0,
-            BuildingType::HeadQuarter { index: _ } => 30.0,
-            BuildingType::Tower => 30.0,
-            BuildingType::Casern => 20.0,
-            BuildingType::Walls => 30.0,
-        }
-    }
-
-    fn source_building_attack_score(&self, source_building: &BuildingView) -> f32 {
-        match source_building.building_type {
-            BuildingType::House => 10.0,
-            BuildingType::HeadQuarter { index: _ } => 5.0,
-            BuildingType::Tower => -10.0,
-            BuildingType::Casern => 20.0,
-            BuildingType::Walls => -50.0,
-        }
-    }
-
-    fn dist_score(&self, dist: f32) -> f32 {
-        -0.002 * (dist * dist) + 50.0
-    }
-
-    fn pop_score(&self, pop: i32, max_pop: i32) -> f32 {
-        let pop_diff = (max_pop - pop) as f32;
-        let pop_diff = pop_diff.clamp(0.001, max_pop as f32);
-
-        let fill_ratio = 10.0 / pop_diff;
-
-        (pop as f32 - 5.0) * 10.0 * fill_ratio
-    }
-
-    fn pop_diff_score(&self, pop: i32, enemy_pop: i32) -> f32 {
-        let pop_diff = (pop - (enemy_pop * 2)) as f32;
-
-        if pop_diff < 0.0 {
-            pop_diff * 50.0
-        } else {
-            pop_diff * 5.0
-        }
+        (pop_percentage - building_target_pop_percentage) * 300.0
+            + building_view.building_safety.spatial * 50.0
     }
 
     fn timer_score(&self) -> f32 {
@@ -171,11 +157,33 @@ impl Brain {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone, Copy)]
 pub enum BotAction {
+    #[default]
     None,
     MoveOrder {
         source_building: Entity,
         target_building: Entity,
     },
+}
+
+#[derive(Debug, Default)]
+pub struct Scores {
+    pub action: BotAction,
+    pub reinforcement_score: f32,
+    pub attack_score: f32,
+    pub general_score: f32,
+}
+
+impl Scores {
+    pub fn new(bot_action: BotAction) -> Self {
+        Self {
+            action: bot_action,
+            ..Default::default()
+        }
+    }
+
+    pub fn total_score(&self) -> f32 {
+        self.reinforcement_score + self.attack_score + self.general_score
+    }
 }
