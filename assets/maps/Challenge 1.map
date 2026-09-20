@@ -1,12 +1,18 @@
 (
     map_name: "Challenge 1",
-    map_size: (50, 20),
+    map_size: (40, 40),
     max_players: 2,
-    building_infos: {(3): (
+    building_infos: {(10): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((11, 3)),
+            bottom_left_coord: ((11, 2)),
+        ),
+    ), (3): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((26, 26)),
         ),
     ), (0): (
         building_type: HeadQuarter(
@@ -14,13 +20,19 @@
         ),
         grid_transform: (
             size: (4, 4),
-            bottom_left_coord: ((2, 8)),
+            bottom_left_coord: ((2, 2)),
         ),
     ), (7): (
-        building_type: House,
+        building_type: Tower,
         grid_transform: (
-            size: (3, 3),
-            bottom_left_coord: ((45, 4)),
+            size: (2, 2),
+            bottom_left_coord: ((30, 30)),
+        ),
+    ), (6): (
+        building_type: Tower,
+        grid_transform: (
+            size: (2, 2),
+            bottom_left_coord: ((33, 27)),
         ),
     ), (1): (
         building_type: HeadQuarter(
@@ -28,37 +40,49 @@
         ),
         grid_transform: (
             size: (4, 4),
-            bottom_left_coord: ((44, 8)),
+            bottom_left_coord: ((34, 34)),
         ),
-    ), (6): (
+    ), (9): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((41, 13)),
+            bottom_left_coord: ((11, 11)),
         ),
     ), (4): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((15, 9)),
+            bottom_left_coord: ((36, 30)),
         ),
     ), (8): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((41, 4)),
+            bottom_left_coord: ((2, 11)),
         ),
-    ), (5): (
+    ), (11): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((45, 13)),
+            bottom_left_coord: ((25, 36)),
+        ),
+    ), (12): (
+        building_type: House,
+        grid_transform: (
+            size: (3, 3),
+            bottom_left_coord: ((36, 25)),
+        ),
+    ), (5): (
+        building_type: Tower,
+        grid_transform: (
+            size: (2, 2),
+            bottom_left_coord: ((27, 33)),
         ),
     ), (2): (
         building_type: House,
         grid_transform: (
             size: (3, 3),
-            bottom_left_coord: ((11, 15)),
+            bottom_left_coord: ((30, 36)),
         ),
     )},
 )
