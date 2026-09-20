@@ -24,7 +24,7 @@ pub struct BuildingAttackedState {
 impl Default for BuildingAttackedState {
     fn default() -> Self {
         Self {
-            since_last_attack: Timer::from_seconds(1.0, TimerMode::Once),
+            since_last_attack: Timer::from_seconds(3.0, TimerMode::Once),
             damage_taken: 0.0,
         }
     }
@@ -67,7 +67,7 @@ fn on_ant_enters(
 
     let health = ant_stats.health;
     let damage = ant_stats.attack_power / building_stats.defense;
-    let damage = damage * (health.current / health.max);
+    let damage = damage * health.percent();
 
     attack_state.damage_taken += damage;
     attack_state.since_last_attack.reset();

@@ -19,6 +19,6 @@ impl Health {
     }
 
     pub fn percent(&self) -> f32 {
-        self.max / self.current
+        self.current / self.max
     }
 }
