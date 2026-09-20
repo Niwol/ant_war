@@ -42,4 +42,13 @@ impl AntType {
             },
         }
     }
+
+    pub fn ant_name(&self) -> String {
+        match self {
+            AntType::Unit => "Unit",
+            AntType::Worker => "Worker",
+            AntType::Soldier => "Soldier",
+        }
+        .to_string()
+    }
 }

@@ -12,11 +12,11 @@ use crate::{
     },
     map::Map,
     menu::{
-        MenuState,
         game_preparation_menu::{
             MAP_PREVIEW_IMAGE_SIZE,
             menu_backend::{MapLoadingState, SelectedMap},
         },
+        main_menu::MainMenuState,
     },
 };
 
@@ -28,13 +28,13 @@ pub const PREVIEW_SCENE_OFFSET: Vec3 = Vec3 {
 
 pub fn plugin(app: &mut App) {
     app.add_systems(
-        OnEnter(MenuState::GamePreparation),
+        OnEnter(MainMenuState::GamePreparation),
         create_map_preview_image,
     );
     app.add_systems(OnEnter(MapLoadingState::Loaded), spawn_preview_scene);
 
     app.add_systems(
-        OnExit(MenuState::GamePreparation),
+        OnExit(MainMenuState::GamePreparation),
         remove_map_preview_elements,
     );
 }

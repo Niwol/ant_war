@@ -74,7 +74,7 @@ impl BuildingType {
         }
     }
 
-    pub const fn _max_inhabitants(&self) -> i32 {
+    pub const fn max_inhabitants(&self) -> i32 {
         match self {
             BuildingType::House => House::_max_inhabitants(),
             BuildingType::HeadQuarter { index: _ } => HeadQuarter::_max_inhabitants(),

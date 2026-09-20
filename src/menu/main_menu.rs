@@ -4,14 +4,38 @@ use bevy::{
     ui_widgets::Activate,
 };
 
-use crate::{AppState, menu::MenuState};
+use crate::AppState;
 
-#[derive(Component, Default, Clone)]
-pub struct MainMenu;
+mod how_to_play_menu;
 
-pub fn main_menu() -> impl Scene {
+pub struct MainMenuPlugin;
+impl Plugin for MainMenuPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugins(how_to_play_menu::plugin);
+
+        app.add_sub_state::<MainMenuState>();
+
+        app.add_systems(OnEnter(MainMenuState::TitleScreen), spawn_main_menu);
+    }
+}
+
+#[derive(SubStates, Hash, Debug, PartialEq, Eq, Default, Clone, Copy)]
+#[source(AppState = AppState::MainMenu)]
+pub enum MainMenuState {
+    #[default]
+    TitleScreen,
+    GamePreparation,
+    HowToPlay,
+}
+
+fn spawn_main_menu(mut commands: Commands, mut window: Single<&mut Window>) {
+    window.resolution.set(1000.0, 800.0);
+    commands.spawn_scene(title_screen());
+}
+
+pub fn title_screen() -> impl Scene {
     bsn! {
-        MainMenu
+        DespawnOnExit<MainMenuState>(MainMenuState::TitleScreen)
 
         Node {
             flex_direction: FlexDirection::Column,
@@ -54,6 +78,7 @@ fn buttons() -> impl Scene {
 
         Children [
             play_button(),
+            how_to_play_button(),
             map_editor_button(),
             exit_button(),
         ]
@@ -68,8 +93,22 @@ fn play_button() -> impl Scene {
                 ThemedText
             }
         }
-        on(|_: On<Activate>, mut next_state: ResMut<NextState<MenuState>>| {
-            next_state.set(MenuState::GamePreparation);
+        on(|_: On<Activate>, mut next_state: ResMut<NextState<MainMenuState>>| {
+            next_state.set(MainMenuState::GamePreparation);
+        })
+    }
+}
+
+fn how_to_play_button() -> impl Scene {
+    bsn! {
+        @FeathersButton {
+            @caption: bsn! {
+                Text::new("How To Play")
+                ThemedText
+            }
+        }
+        on(|_: On<Activate>, mut next_state: ResMut<NextState<MainMenuState>>| {
+            next_state.set(MainMenuState::HowToPlay);
         })
     }
 }

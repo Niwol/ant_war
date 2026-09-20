@@ -14,7 +14,6 @@ use crate::{
     game::player::{NB_PLAYER_COLORS, PlayerColor},
     map::{Map, MapCollection, MapInfo},
     menu::{
-        MenuState,
         game_preparation_menu::{
             map_preview::MapPreviewImage,
             menu_backend::{
@@ -23,6 +22,7 @@ use crate::{
                 play_button_clicked,
             },
         },
+        main_menu::MainMenuState,
     },
 };
 
@@ -37,11 +37,11 @@ impl Plugin for GamePreparationMenuPlugin {
         app.add_plugins((menu_backend::plugin, map_preview::plugin));
 
         app.add_systems(
-            OnEnter(MenuState::GamePreparation),
+            OnEnter(MainMenuState::GamePreparation),
             spawn_game_preparation_menu,
         );
         app.add_systems(
-            OnExit(MenuState::GamePreparation),
+            OnExit(MainMenuState::GamePreparation),
             despawn_game_preparation_menu,
         );
 
@@ -471,7 +471,7 @@ fn main_menu_button() -> impl Scene {
                 ThemedText
             }
         }
-        on(|_: On<Activate>, mut next_state: ResMut<NextState<MenuState>>| next_state.set(MenuState::MainMenu))
+        on(|_: On<Activate>, mut next_state: ResMut<NextState<MainMenuState>>| next_state.set(MainMenuState::TitleScreen))
     }
 }
 

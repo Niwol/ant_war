@@ -11,11 +11,11 @@ use crate::{
     },
     map::{Map, MapAccess, MapCollection},
     menu::{
-        MenuState,
         game_preparation_menu::{
             BuildingAssignementButton, ButtonTextRef, ColorSelectButton, PlayButton, PlayerId,
             map_preview::MainBuildingIndex,
         },
+        main_menu::MainMenuState,
     },
 };
 
@@ -32,7 +32,7 @@ pub fn plugin(app: &mut App) {
 
     app.add_systems(
         Update,
-        update_play_button_interactibility.run_if(in_state(MenuState::GamePreparation)),
+        update_play_button_interactibility.run_if(in_state(MainMenuState::GamePreparation)),
     );
 
     app.add_observer(on_map_selected);
@@ -47,7 +47,7 @@ pub fn plugin(app: &mut App) {
 }
 
 #[derive(SubStates, PartialEq, Eq, Debug, Clone, Copy, Hash, Default)]
-#[source(MenuState = MenuState::GamePreparation)]
+#[source(MainMenuState = MainMenuState::GamePreparation)]
 pub enum MapLoadingState {
     #[default]
     Loading,
