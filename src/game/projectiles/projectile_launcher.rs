@@ -2,7 +2,12 @@ use bevy::prelude::*;
 
 use crate::{
     AppState,
-    game::{ant::Ant, game_info::GameState, player::PlayerRef, projectiles::Projectile},
+    game::{
+        ant::Ant,
+        game_info::GameState,
+        player::{Player, PlayerColor, PlayerRef},
+        projectiles::Projectile,
+    },
     world_grid::grid_transform::GridTransform,
 };
 
@@ -100,15 +105,17 @@ fn shoot(
 
 fn draw_launcher_ranges(
     mut gizmos: Gizmos,
-    launchers: Query<(&ProjectileLauncher, &GridTransform)>,
+    players: Query<&Player>,
+    launchers: Query<(&ProjectileLauncher, &GridTransform, Option<&PlayerRef>)>,
 ) {
-    for (launcher, grid_transform) in &launchers {
+    for (launcher, grid_transform, player_ref) in &launchers {
         let center = grid_transform.center_in_world();
 
-        gizmos.circle_2d(
-            center,
-            launcher.range,
-            Color::linear_rgba(1.00, 1.00, 1.00, 0.2),
-        );
+        let player_color = match player_ref {
+            Some(player_ref) => players.get(player_ref.0).unwrap().player_color,
+            None => PlayerColor::Neutral,
+        };
+
+        gizmos.circle_2d(center, launcher.range, player_color.color().with_alpha(0.2));
     }
 }

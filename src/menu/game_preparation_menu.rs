@@ -1,5 +1,4 @@
 use bevy::{
-    color::palettes::css::WHITE,
     feathers::{
         controls::{FeathersButton, FeathersListRow, FeathersListView},
         display::label,
@@ -80,7 +79,7 @@ fn spawn_game_preparation_menu(mut commands: Commands, maps: Res<MapCollection>)
 
             row_gap: px(5.0),
         }
-        BorderColor::all(WHITE)
+        BorderColor::all(Color::WHITE)
 
         Children [
             map_selection(&maps),
@@ -162,7 +161,7 @@ fn middle_panel() -> impl Scene {
             border_radius: px(2.0),
             padding: px(5.0),
         }
-        BorderColor::all(WHITE)
+        BorderColor::all(Color::WHITE)
     }
 }
 
@@ -223,7 +222,7 @@ fn left_panel(game_preparation_info: GamePreparationInfo) -> impl Scene {
 
             row_gap: px(5.0),
         }
-        BorderColor::all(WHITE)
+        BorderColor::all(Color::WHITE)
 
         Children [
             player_informations(game_preparation_info.clone()),
@@ -255,7 +254,7 @@ fn player_informations(game_preparation_info: GamePreparationInfo) -> impl Scene
             border_radius: px(2.0),
             padding: px(5.0),
         }
-        BorderColor::all(WHITE)
+        BorderColor::all(Color::WHITE)
 
         Children [
             label("Players (color + Player/Bot):"),
@@ -348,10 +347,10 @@ fn building_assignements(game_preparation_info: GamePreparationInfo) -> impl Sce
             border_radius: px(2.0),
             padding: px(5.0),
         }
-        BorderColor::all(WHITE)
+        BorderColor::all(Color::WHITE)
 
         Children [
-            label("Main building assignements:"),
+            label("Head Quarter assignements:"),
             {building_assignement_elements(game_preparation_info)}
         ]
     }
@@ -415,7 +414,7 @@ fn building_assignement_element(building_id: usize) -> Box<dyn Scene> {
         }
 
         Children [
-            label(format!("Main building {building_id}")),
+            label(format!("Head Quarter {building_id}")),
             @BuildingAssignementButton { building_id },
         ]
     };
@@ -454,7 +453,7 @@ fn bottom_bar() -> impl Scene {
             border_radius: px(2.0),
             padding: px(5.0),
         }
-        BorderColor::all(WHITE)
+        BorderColor::all(Color::WHITE)
 
         Children [
             main_menu_button(),

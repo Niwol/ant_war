@@ -8,6 +8,8 @@ use crate::{
     },
 };
 
+pub const BOTTOM_PANEL_HEIGHT: f32 = 120.0;
+
 pub struct BottomPanelPlugin;
 impl Plugin for BottomPanelPlugin {
     fn build(&self, app: &mut App) {
@@ -38,7 +40,7 @@ fn bottom_panel() -> impl Scene {
             align_self: AlignSelf::FlexEnd,
 
             width: percent(100.0),
-            height: px(200.0),
+            height: px(BOTTOM_PANEL_HEIGHT),
 
             column_gap: px(5.0),
             border: px(2.0),

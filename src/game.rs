@@ -13,6 +13,7 @@ use crate::{
     },
     map::Map,
     menu::game_preparation_menu::menu_backend::GamePreparationInfo,
+    ui::bottom_panel::BOTTOM_PANEL_HEIGHT,
     world_grid::WorldGrid,
 };
 
@@ -79,7 +80,7 @@ fn start_game(
 
     window
         .resolution
-        .set(map_size.x + 700.0, map_size.y + 300.0);
+        .set(map_size.x + 300.0, map_size.y + 50.0 + BOTTOM_PANEL_HEIGHT);
 
     commands.trigger(SpawnMap {
         map: start_game.map.clone(),
@@ -102,7 +103,8 @@ fn spawn_map(
     let world_grid = WorldGrid::new(map.size());
     let map_center = world_grid.center();
 
-    *camera_transform.into_inner() = Transform::from_xyz(map_center.x, map_center.y, 0.0);
+    *camera_transform.into_inner() =
+        Transform::from_xyz(map_center.x, map_center.y - BOTTOM_PANEL_HEIGHT / 2.0, 0.0);
     commands.insert_resource(world_grid);
 
     let mut player_refs = HashMap::new();
