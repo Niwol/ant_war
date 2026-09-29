@@ -8,6 +8,7 @@ use crate::game::{
 };
 
 pub const CASERN_MAX_INHABITANTS: i32 = 20;
+pub const CASERN_PRODUCTION_TIME: f32 = 5.0;
 
 pub fn plugin(_app: &mut App) {}
 
@@ -34,7 +35,7 @@ impl Casern {
                 @grid_transform: {building_props.grid_transform}
             }
 
-            Inhabitants::new(5, CASERN_MAX_INHABITANTS, Some(Timer::from_seconds(5.0, TimerMode::Repeating)))
+            Inhabitants::new(5, CASERN_MAX_INHABITANTS, Some(Timer::from_seconds(CASERN_PRODUCTION_TIME, TimerMode::Repeating)))
             template_value(building_type.base_stats())
 
             Sprite {

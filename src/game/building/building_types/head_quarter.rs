@@ -8,6 +8,7 @@ use crate::game::{
 };
 
 pub const HQ_MAX_INHABITANTS: i32 = 40;
+pub const HQ_PRODUCTION_TIME: f32 = 1.0;
 
 pub fn plugin(_app: &mut App) {}
 
@@ -36,7 +37,7 @@ impl HeadQuarter {
                 @grid_transform: {building_props.grid_transform}
             }
 
-            Inhabitants::new(5, HQ_MAX_INHABITANTS, Some(Timer::from_seconds(1.0, TimerMode::Repeating)))
+            Inhabitants::new(5, HQ_MAX_INHABITANTS, Some(Timer::from_seconds(HQ_PRODUCTION_TIME, TimerMode::Repeating)))
             template_value(building_type.base_stats())
 
             Sprite {

@@ -6,7 +6,11 @@ use crate::game::{
     building::{
         building_stats::BuildingStats,
         building_types::{
-            casern::Casern, head_quarter::HeadQuarter, house::House, tower::Tower, walls::Walls,
+            casern::{CASERN_PRODUCTION_TIME, Casern},
+            head_quarter::{HQ_PRODUCTION_TIME, HeadQuarter},
+            house::{HOUSE_PRODUCTION_TIME, House},
+            tower::Tower,
+            walls::Walls,
         },
     },
 };
@@ -46,7 +50,7 @@ impl BuildingType {
     pub fn grid_size(&self) -> UVec2 {
         match self {
             BuildingType::House => UVec2::splat(3),
-            BuildingType::HeadQuarter { index: _ } => UVec2::splat(4),
+            BuildingType::HeadQuarter { .. } => UVec2::splat(4),
             BuildingType::Tower => UVec2::splat(2),
             BuildingType::Casern => UVec2::splat(3),
             BuildingType::Walls => UVec2::splat(5),
@@ -56,7 +60,7 @@ impl BuildingType {
     pub fn name(&self) -> String {
         match self {
             BuildingType::House => "House",
-            BuildingType::HeadQuarter { index: _ } => "Head Quarter",
+            BuildingType::HeadQuarter { .. } => "Head Quarter",
             BuildingType::Tower => "Tower",
             BuildingType::Casern => "Casern",
             BuildingType::Walls => "Walls",
@@ -67,7 +71,7 @@ impl BuildingType {
     pub fn ants_produced(&self) -> AntType {
         match self {
             BuildingType::House => AntType::Unit,
-            BuildingType::HeadQuarter { index: _ } => AntType::Worker,
+            BuildingType::HeadQuarter { .. } => AntType::Worker,
             BuildingType::Tower => AntType::Unit,
             BuildingType::Casern => AntType::Soldier,
             BuildingType::Walls => AntType::Unit,
@@ -77,7 +81,7 @@ impl BuildingType {
     pub const fn max_inhabitants(&self) -> i32 {
         match self {
             BuildingType::House => House::_max_inhabitants(),
-            BuildingType::HeadQuarter { index: _ } => HeadQuarter::_max_inhabitants(),
+            BuildingType::HeadQuarter { .. } => HeadQuarter::_max_inhabitants(),
             BuildingType::Tower => Tower::_max_inhabitants(),
             BuildingType::Casern => Casern::_max_inhabitants(),
             BuildingType::Walls => Walls::_max_inhabitants(),
@@ -87,7 +91,7 @@ impl BuildingType {
     pub const fn inhabitants_percentage(&self, current: i32) -> f32 {
         match self {
             BuildingType::House => House::inhabitants_percentage(current),
-            BuildingType::HeadQuarter { index: _ } => HeadQuarter::inhabitants_percentage(current),
+            BuildingType::HeadQuarter { .. } => HeadQuarter::inhabitants_percentage(current),
             BuildingType::Tower => Tower::inhabitants_percentage(current),
             BuildingType::Casern => Casern::inhabitants_percentage(current),
             BuildingType::Walls => Walls::inhabitants_percentage(current),
@@ -101,6 +105,16 @@ impl BuildingType {
             BuildingType::Tower => BuildingStats { defense: 1.0 },
             BuildingType::Casern => BuildingStats { defense: 1.0 },
             BuildingType::Walls => BuildingStats { defense: 1.5 },
+        }
+    }
+
+    pub fn production_time(&self) -> Option<f32> {
+        match self {
+            BuildingType::House => Some(HOUSE_PRODUCTION_TIME),
+            BuildingType::HeadQuarter { .. } => Some(HQ_PRODUCTION_TIME),
+            BuildingType::Tower => None,
+            BuildingType::Casern => Some(CASERN_PRODUCTION_TIME),
+            BuildingType::Walls => None,
         }
     }
 }

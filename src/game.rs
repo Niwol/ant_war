@@ -78,9 +78,10 @@ fn start_game(
 ) {
     let map_size = start_game.map.size_world();
 
-    window
-        .resolution
-        .set(map_size.x + 300.0, map_size.y + 50.0 + BOTTOM_PANEL_HEIGHT);
+    window.resolution.set(
+        map_size.x + 300.0 + BOTTOM_PANEL_HEIGHT / 2.0,
+        map_size.y + 50.0,
+    );
 
     commands.trigger(SpawnMap {
         map: start_game.map.clone(),
@@ -104,7 +105,7 @@ fn spawn_map(
     let map_center = world_grid.center();
 
     *camera_transform.into_inner() =
-        Transform::from_xyz(map_center.x, map_center.y - BOTTOM_PANEL_HEIGHT / 2.0, 0.0);
+        Transform::from_xyz(map_center.x - BOTTOM_PANEL_HEIGHT / 2.0, map_center.y, 0.0);
     commands.insert_resource(world_grid);
 
     let mut player_refs = HashMap::new();

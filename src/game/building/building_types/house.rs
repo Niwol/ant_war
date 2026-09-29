@@ -8,6 +8,7 @@ use crate::game::{
 };
 
 pub const HOUSE_MAX_INHABITANTS: i32 = 20;
+pub const HOUSE_PRODUCTION_TIME: f32 = 2.0;
 
 pub fn plugin(_app: &mut App) {}
 
@@ -33,7 +34,7 @@ impl House {
                 @grid_transform: {building_props.grid_transform}
             }
 
-            Inhabitants::new(5, HOUSE_MAX_INHABITANTS, Some(Timer::from_seconds(2.0, TimerMode::Repeating)))
+            Inhabitants::new(5, HOUSE_MAX_INHABITANTS, Some(Timer::from_seconds(HOUSE_PRODUCTION_TIME, TimerMode::Repeating)))
             template_value(building_type.base_stats())
 
             Sprite {
